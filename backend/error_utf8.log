@@ -1,0 +1,63 @@
+﻿[dotenv@17.3.1] injecting env (8) from .env -- tip: ­ƒøí´©Å auth for agents: https://vestauth.com
+node : 
+[31merror[39m: 
+MongoParseError: 
+options 
+usenewurlparser, 
+useunifiedtopology are 
+not supported
+At line:1 char:1
++ node server.js *>&1 
+| Out-File -Encoding 
+utf8 error_utf8.log
++ ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: ([31merror[3   
+ 9m...e not support    
+ed:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+    at parseOptions (C:
+\CP\backend\node_module
+s\mongodb\lib\connectio
+n_string.js:272:15)
+    at new MongoClient 
+(C:\CP\backend\node_mod
+ules\mongodb\lib\mongo_
+client.js:67:61)
+    at NativeConnection
+.createClient (C:\CP\ba
+ckend\node_modules\mong
+oose\lib\drivers\node-m
+ongodb-native\connectio
+n.js:334:14)
+    at NativeConnection
+.openUri (C:\CP\backend
+\node_modules\mongoose\
+lib\connection.js:1075:
+34)
+    at 
+Mongoose.connect (C:\CP
+\backend\node_modules\m
+ongoose\lib\mongoose.js
+:471:15)
+    at 
+Object.<anonymous> (C:\
+CP\backend\server.js:7:
+10)
+    at Module._compile 
+(node:internal/modules/
+cjs/loader:1761:14)
+    at Object..js (node
+:internal/modules/cjs/l
+oader:1893:10)
+    at Module.load (nod
+e:internal/modules/cjs/
+loader:1481:32)
+    at Module._load (no
+de:internal/modules/cjs
+/loader:1300:12)
