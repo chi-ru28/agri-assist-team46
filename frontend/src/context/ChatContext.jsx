@@ -65,8 +65,51 @@ export const ChatProvider = ({ children }) => {
         }
     };
 
+    const sendImageMessage = async (file) => {
+        if (!file) return;
+
+        // Add user message indicating upload
+        const userMsg = {
+            id: Date.now(),
+            sender: 'user',
+            text: `[Uploaded Image: ${file.name}] Can you analyze this crop image?`,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+
+        setMessages((prev) => [...prev, userMsg]);
+        setIsTyping(true);
+
+        try {
+            const data = await api.ai.analyzeImage(file);
+
+            setIsTyping(false);
+            const aiMsg = {
+                id: Date.now() + 1,
+                sender: 'ai',
+                text: `Analysis Complete! 
+Deficiency: ${data.deficiency}
+Severity: ${data.severity}
+Fertilizer Recommended: ${data.recommendation.fertilizer}
+Dosage: ${data.recommendation.dosagePerAcre}
+Precautions: ${data.recommendation.precautions}
+Confidence: ${data.mlConfidence || data.healthScore}%`,
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+            setMessages((prev) => [...prev, aiMsg]);
+        } catch (error) {
+            setIsTyping(false);
+            const errorMsg = {
+                id: Date.now() + 1,
+                sender: 'ai',
+                text: 'System Error: Unable to process the image. Please make sure the ML service is running.',
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+            setMessages((prev) => [...prev, errorMsg]);
+        }
+    };
+
     return (
-        <ChatContext.Provider value={{ messages, isTyping, sendMessage }}>
+        <ChatContext.Provider value={{ messages, isTyping, sendMessage, sendImageMessage }}>
             {children}
         </ChatContext.Provider>
     );

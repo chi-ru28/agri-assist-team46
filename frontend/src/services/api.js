@@ -30,7 +30,6 @@ export const api = {
             return response.data;
         },
         logout: async () => {
-            // Optional: call backend logout endpoint here if implemented
             const response = await apiClient.post('/auth/logout');
             return response.data;
         }
@@ -38,6 +37,23 @@ export const api = {
     chat: {
         sendMessage: async (message) => {
             const response = await apiClient.post('/chat', { message });
+            return response.data;
+        }
+    },
+    ai: {
+        analyzeImage: async (imageFile) => {
+            const formData = new FormData();
+            formData.append('image', imageFile);
+
+            const response = await apiClient.post('/ai/analyze', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            return response.data;
+        },
+        predictFertilizer: async (data) => {
+            const response = await apiClient.post('/ai/predict-fertilizer', data);
             return response.data;
         }
     }

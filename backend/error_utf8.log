@@ -1,63 +1,91 @@
-﻿[dotenv@17.3.1] injecting env (8) from .env -- tip: ­ƒøí´©Å auth for agents: https://vestauth.com
-node : 
-[31merror[39m: 
-MongoParseError: 
-options 
-usenewurlparser, 
-useunifiedtopology are 
-not supported
+﻿[dotenv@17.3.1] injecting env (7) from .env -- tip: ≡ƒ¢í∩╕Å auth for agents: https://vestauth.com
+node : node:internal/modules/
+cjs/loader:1143
 At line:1 char:1
-+ node server.js *>&1 
-| Out-File -Encoding 
-utf8 error_utf8.log
-+ ~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo     
-         : NotSpecifi  
-  ed: ([31merror[3   
- 9m...e not support    
-ed:String) [], Rem    
-oteException
-    + FullyQualifiedEr 
-   rorId : NativeComm  
-  andError
++ node server.js > error.log 
+2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
+    + CategoryInfo           
+   : NotSpecified: (node:in  
+  ternal/modules/cjs/loade   
+ r:1143:String) [], Remot    
+eException
+    + FullyQualifiedErrorId  
+   : NativeCommandError
  
-    at parseOptions (C:
-\CP\backend\node_module
-s\mongodb\lib\connectio
-n_string.js:272:15)
-    at new MongoClient 
-(C:\CP\backend\node_mod
-ules\mongodb\lib\mongo_
-client.js:67:61)
-    at NativeConnection
-.createClient (C:\CP\ba
-ckend\node_modules\mong
-oose\lib\drivers\node-m
-ongodb-native\connectio
-n.js:334:14)
-    at NativeConnection
-.openUri (C:\CP\backend
-\node_modules\mongoose\
-lib\connection.js:1075:
-34)
+  throw err;
+  ^
+
+Error: Cannot find module 
+'../models/Product'
+Require stack:
+- C:\Users\DELL\OneDrive\Desk
+top\Project\agri-assist-team4
+6\backend\src\controllers\sho
+pController.js
+- C:\Users\DELL\OneDrive\Desk
+top\Project\agri-assist-team4
+6\backend\src\routes\shopRout
+es.js
+- C:\Users\DELL\OneDrive\Desk
+top\Project\agri-assist-team4
+6\backend\src\app.js
+- C:\Users\DELL\OneDrive\Desk
+top\Project\agri-assist-team4
+6\backend\server.js
     at 
-Mongoose.connect (C:\CP
-\backend\node_modules\m
-ongoose\lib\mongoose.js
-:471:15)
+Module._resolveFilename (node
+:internal/modules/cjs/loader:
+1140:15)
+    at Module._load (node:int
+ernal/modules/cjs/loader:981:
+27)
+    at Module.require (node:i
+nternal/modules/cjs/loader:12
+31:19)
+    at require (node:internal
+/modules/helpers:177:18)
+    at Object.<anonymous> (C:
+\Users\DELL\OneDrive\Desktop\
+Project\agri-assist-team46\ba
+ckend\src\controllers\shopCon
+troller.js:3:17)
+    at Module._compile (node:
+internal/modules/cjs/loader:1
+364:14)
     at 
-Object.<anonymous> (C:\
-CP\backend\server.js:7:
-10)
-    at Module._compile 
-(node:internal/modules/
-cjs/loader:1761:14)
-    at Object..js (node
-:internal/modules/cjs/l
-oader:1893:10)
-    at Module.load (nod
-e:internal/modules/cjs/
-loader:1481:32)
-    at Module._load (no
-de:internal/modules/cjs
-/loader:1300:12)
+Module._extensions..js (node:
+internal/modules/cjs/loader:1
+422:10)
+    at Module.load (node:inte
+rnal/modules/cjs/loader:1203:
+32)
+    at Module._load (node:int
+ernal/modules/cjs/loader:1019
+:12)
+    at Module.require (node:i
+nternal/modules/cjs/loader:12
+31:19) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\DELL\\OneDriv
+e\\Desktop\\Project\\agri-ass
+ist-team46\\backend\\src\\con
+trollers\\shopController.js',
+    'C:\\Users\\DELL\\OneDriv
+e\\Desktop\\Project\\agri-ass
+ist-team46\\backend\\src\\rou
+tes\\shopRoutes.js',
+    'C:\\Users\\DELL\\OneDriv
+e\\Desktop\\Project\\agri-ass
+ist-team46\\backend\\src\\app
+.js',
+    'C:\\Users\\DELL\\OneDriv
+e\\Desktop\\Project\\agri-ass
+ist-team46\\backend\\server.j
+s'
+  ]
+}
+
+Node.js v18.20.8

@@ -5,7 +5,7 @@ import { VoiceButton } from './VoiceButton';
 
 export const ChatInput = () => {
     const [input, setInput] = useState('');
-    const { sendMessage } = useChat();
+    const { sendMessage, sendImageMessage } = useChat();
     const fileInputRef = useRef(null);
 
     const handleSubmit = (e) => {
@@ -19,8 +19,7 @@ export const ChatInput = () => {
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
-            // Simulate image upload processing
-            sendMessage(`[Uploaded Image: ${file.name}] What can you tell me about this?`);
+            sendImageMessage(file);
         }
     };
 
