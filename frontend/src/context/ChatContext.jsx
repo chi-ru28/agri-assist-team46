@@ -12,7 +12,7 @@ export const ChatProvider = ({ children }) => {
     useEffect(() => {
         // Set initial welcome message based on role
         if (user) {
-            const welcomeText = user.role === 'Farmer'
+            const welcomeText = user?.role?.toLowerCase() === 'farmer'
                 ? "Hello Farmer 👨‍🌾 How can I assist your crop today?"
                 : "Hello Shop Owner 🏪 How can I help manage your inventory today?";
 

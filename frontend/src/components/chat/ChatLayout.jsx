@@ -57,7 +57,7 @@ export const ChatLayout = () => {
                         </button>
 
                         <div className="space-y-6">
-                            {user?.role === 'Farmer' ? <FarmerQuickActions /> : <ShopQuickActions />}
+                            {user?.role?.toLowerCase() === 'farmer' ? <FarmerQuickActions /> : <ShopQuickActions />}
                         </div>
                     </div>
                 </div>

@@ -49,11 +49,11 @@ export const ChatHeader = () => {
             <div className="flex items-center gap-3">
                 {/* User Role Badge */}
                 <Link
-                    to={`/${user?.role.toLowerCase()}/profile`}
+                    to={`/${user?.role?.toLowerCase()}/profile`}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-agri-100 dark:bg-agri-900/50 text-agri-700 dark:text-agri-300 text-sm font-medium hover:bg-agri-200 dark:hover:bg-agri-800/50 transition-colors"
                     title={`View ${user?.role} Profile`}
                 >
-                    {user?.role === 'Farmer' ? '👨‍🌾' : '🏪'}
+                    {user?.role?.toLowerCase() === 'farmer' ? '👨‍🌾' : '🏪'}
                     <span className="hidden sm:inline">{user?.role}</span>
                 </Link>
 
