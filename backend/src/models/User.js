@@ -35,12 +35,11 @@ userSchema.methods.isPasswordMatch = async function (password) {
 };
 
 // Hash password before saving
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function () {
     const user = this;
     if (user.isModified('password')) {
         user.password = await bcrypt.hash(user.password, 10);
     }
-    next();
 });
 
 // Remove sensitive info when returning JSON

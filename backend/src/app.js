@@ -36,7 +36,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // sanitize request data
-app.use(mongoSanitize());
+// app.use(mongoSanitize()); // Disabled due to Express 5 incompatibility with req.query getter
 
 // enable cors
 app.use(cors());
