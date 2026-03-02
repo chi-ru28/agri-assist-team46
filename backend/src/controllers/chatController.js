@@ -38,7 +38,9 @@ const chat = catchAsync(async (req, res) => {
     res.status(httpStatus.OK).send({
         reply: aiReply.text,
         tokens: aiReply.tokensUsed,
-        weatherContextApplied: !!weatherWarning
+        weatherContextApplied: !!weatherWarning,
+        audioUrl: aiReply.audioUrl,
+        detectedLanguage: aiReply.detectedLanguage
     });
 });
 

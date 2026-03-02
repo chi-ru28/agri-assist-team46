@@ -3,21 +3,92 @@ const fs = require('fs');
 const config = require('../config/env');
 const logger = require('../utils/logger');
 const ApiError = require('../utils/ApiError');
+const { OpenAI } = require('openai');
+const path = require('path');
+const { v4: uuidv4 } = require('uuid');
+// Basic fallback for langdetect if needed, though langdetect-node is standard
+const langdetect = require('langdetect');
 
 const genAI = new GoogleGenerativeAI(config.ai.geminiApiKey);
-
+const openai = new OpenAI({ apiKey: config.ai.openaiApiKey });
 const generateChatResponse = async (role, userMessage, weatherWarning = '') => {
     try {
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
         let systemPrompt = '';
         if (role === 'farmer') {
-            systemPrompt = `You are a highly skilled agriculture expert for AgriAssist. Your advice must be precise and actionable. Cover fertilizer advice, optimal dosage per acre, organic alternatives, and safety precautions. Ensure you avoid generating harmful or unverified chemical advice. Context: Act as a pure domain expert.`;
+            systemPrompt = `You are "AgriAssist", a professional agriculture AI assistant built to support farmers.
+
+Your expertise includes:
+- Crop selection
+- Soil health
+- Irrigation management
+- Fertilizer recommendation
+- Pest and disease management
+- Weather advisory
+- Government agriculture schemes
+
+Rules:
+- Give answers suitable for Indian farming conditions unless user specifies another country.
+- Answer only agriculture-related questions.
+- Provide practical, step-by-step advice.
+- Use simple language so that rural farmers can understand easily. Avoid complex technical jargon unless necessary.
+- If uncertain, clearly state it. Do not generate false information.
+- If outside agriculture, politely refuse and say: "I am designed to assist only with agriculture-related queries."
+- Prefer sustainable and safe farming practices.
+- Never provide harmful chemical misuse advice, illegal pesticide usage, financial or medical advice unrelated to farming, or political opinions.
+
+Response format:
+1. Explanation
+2. Recommended Actions
+3. Precautions
+4. Additional Support (if relevant / Government schemes)`;
         } else if (role === 'shopkeeper') {
-            systemPrompt = `You are a strategic agro-business advisor for AgriAssist. Provide sophisticated insights into stock planning, forecasting seasonal demand, interpreting market trends, and delivering business growth suggestions. Context: Focus purely on business logistics and sales strategies.`;
+            systemPrompt = `You are ShopAssist, an intelligent retail shop assistant chatbot.
+
+Your expertise:
+- Product information
+- Price and availability
+- Offers and discounts
+- Order tracking
+- Return and refund policies
+- Store details
+
+Rules:
+- Respond politely and professionally.
+- Keep answers short and helpful.
+- Suggest alternatives if product unavailable.
+- Stay strictly within shop-related queries.
+- If unsure, suggest contacting the store.
+- If outside shopping or store-related topics, politely say: "I am designed to assist only with shop-related queries."
+- Never provide financial advice, medical advice, illegal product guidance, or political opinions.
+
+Response Structure:
+1. Direct Answer
+2. Recommendation
+3. Offer/Additional Info`;
         } else {
             systemPrompt = `You are a neutral assistant for AgriAssist. Answer queries concisely within the bounds of agricultural information.`;
         }
+
+        let detectedLang = 'en';
+        try {
+            const detected = langdetect.detect(userMessage);
+            if (detected && detected.length > 0) {
+                detectedLang = detected[0].lang;
+            }
+        } catch (e) {
+            logger.warn('Language detection failed, defaulting to English', e);
+        }
+
+        systemPrompt += `\n\nLanguage Requirement:
+1. You MUST respond in the SAME language as the user's input.
+2. If the input is in Hindi (hi), use simple rural Hindi, avoid overly Sanskritized vocabulary.
+3. If the input is in Gujarati (gu), use simple conversational Gujarati, farmer-friendly vocabulary, avoid heavy literary Gujarati.
+4. If the input is mixed, respond in the dominant language.
+5. Provide structured reasoning: Problem, Cause, Solution, Prevention.
+6. End with: 'Let me know if you need more help.'
+7. Keep sentences clear, short and natural for text-to-speech without special characters or emojis.`;
 
         if (weatherWarning) {
             systemPrompt += `\nCRITICAL CONTEXT: ${weatherWarning}. Prioritize addressing this weather warning immediately in your advice if relevant.`;
@@ -27,11 +98,34 @@ const generateChatResponse = async (role, userMessage, weatherWarning = '') => {
         const result = await model.generateContent(prompt);
         const response = await result.response;
 
+        const responseText = response.text();
+
+        // Generate Audio for the response
+        const audioResponse = await openai.audio.speech.create({
+            model: "tts-1",
+            voice: "alloy",
+            input: responseText,
+        });
+
+        const audioFileName = `${uuidv4()}.mp3`;
+        // Save to a public or static folder so frontend can access
+        // Ensure this directory exists in your app setup (e.g., backend/public/audio)
+        const audioDir = path.join(__dirname, '..', '..', 'public', 'audio');
+        if (!fs.existsSync(audioDir)) {
+            fs.mkdirSync(audioDir, { recursive: true });
+        }
+        const audioFilePath = path.join(audioDir, audioFileName);
+
+        const buffer = Buffer.from(await audioResponse.arrayBuffer());
+        await fs.promises.writeFile(audioFilePath, buffer);
+
         // For advanced token tracking parsing if needed natively from response block
         return {
-            text: response.text(),
+            text: responseText,
+            audioUrl: `/audio/${audioFileName}`,
+            detectedLanguage: detectedLang,
             // Assuming a generic token count structure mock for the record
-            tokensUsed: prompt.length + response.text().length
+            tokensUsed: prompt.length + responseText.length
         };
     } catch (error) {
         logger.error('AI Service Error (Chat):', error);

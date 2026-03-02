@@ -12,6 +12,7 @@ const envVarsSchema = Joi.object()
         JWT_ACCESS_EXPIRATION_MINUTES: Joi.number().default(30).description('minutes after which access tokens expire'),
         JWT_REFRESH_EXPIRATION_DAYS: Joi.number().default(30).description('days after which refresh tokens expire'),
         GEMINI_API_KEY: Joi.string().required().description('Google Gemini API Key'),
+        OPENAI_API_KEY: Joi.string().required().description('OpenAI API Key'),
         REDIS_URL: Joi.string().default('redis://localhost:6379').description('Redis URL for caching'),
     })
     .unknown();
@@ -36,6 +37,7 @@ module.exports = {
     },
     ai: {
         geminiApiKey: envVars.GEMINI_API_KEY,
+        openaiApiKey: envVars.OPENAI_API_KEY,
     },
     redis: {
         url: envVars.REDIS_URL,

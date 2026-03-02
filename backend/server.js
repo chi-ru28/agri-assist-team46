@@ -4,23 +4,50 @@ const config = require('./src/config/env');
 const logger = require('./src/utils/logger');
 let server;
 
-mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
-    logger.info('Connected to MongoDB');
+const { MongoMemoryServer } = require('mongodb-memory-server');
+
+let mongoServer;
+
+const connectDB = async () => {
+    try {
+        await mongoose.connect(config.mongoose.url, config.mongoose.options);
+        logger.info('Connected to MongoDB');
+    } catch (error) {
+        if (error.name === 'MongoNetworkError' || error.name === 'MongooseServerSelectionError') {
+            logger.warn('Local MongoDB connection failed. Starting in-memory MongoDB server...');
+            mongoServer = await MongoMemoryServer.create();
+            const uri = mongoServer.getUri();
+            await mongoose.connect(uri, config.mongoose.options);
+            logger.info(`Connected to in-memory MongoDB at ${uri}`);
+        } else {
+            throw error;
+        }
+    }
     server = app.listen(config.port, () => {
         logger.info(`Listening to port ${config.port}`);
     });
-});
+};
 
-const exitHandler = () => {
+connectDB();
+
+const exitHandler = async () => {
     if (server) {
-        server.close(() => {
+        server.close(async () => {
             logger.info('Server closed');
+            if (mongoServer) {
+                await mongoServer.stop();
+                logger.info('In-memory MongoDB stopped');
+            }
             process.exit(1);
         });
     } else {
+        if (mongoServer) {
+            await mongoServer.stop();
+        }
         process.exit(1);
     }
 };
+
 
 const unexpectedErrorHandler = (error) => {
     logger.error(error);

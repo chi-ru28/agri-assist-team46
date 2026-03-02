@@ -54,6 +54,7 @@ app.use('/api/shop', shopRoutes);
 app.use('/api/weather', weatherRoutes);
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/audio', express.static(path.join(__dirname, '..', 'public', 'audio')));
 
 // Health Check Endpoint
 app.get('/health', (req, res) => {

@@ -3,13 +3,13 @@ import { useState } from 'react';
 const SVGShow = () => (
     // Actually SVG for hide (with strikethrough) usually means "click to hide", but based on standard: 
     // Let's just use what user gave us directly
-    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
+    <svg xmlns="http://www.w3.org/2000/svg" height="15.6px" viewBox="0 -960 960 960" width="15.6px" fill="currentColor">
         <path d="M168-432q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35ZM96-192v-72h768v72H96Zm299-275q-35-35-35-85t35-85q35-35 85-35t85 35q35 35 35 85t-35 85q-35 35-85 35t-85-35Zm312 0q-35-35-35-85t35-85q35-35 85-35t85 35q35 35 35 85t-35 85q-35 35-85 35t-85-35Z" />
     </svg>
 );
 
 const SVGHide = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
+    <svg xmlns="http://www.w3.org/2000/svg" height="15.6px" viewBox="0 -960 960 960" width="15.6px" fill="currentColor">
         <path d="M160-440q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35Zm555-35q-35-35-35-85t35-85q35-35 85-35t85 35q35 35 35 85t-35 85q-35 35-85 35t-85-35Zm-135-19L414-660q14-10 31-15t35-5q50 0 85 35t35 85q0 18-5 35t-15 31ZM792-56 648-200H80v-80h488L56-792l56-56 736 736-56 56Z" />
     </svg>
 );
