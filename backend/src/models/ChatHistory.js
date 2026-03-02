@@ -6,19 +6,25 @@ const chatHistorySchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    message: {
-        type: String,
-        required: true
-    },
-    reply: {
-        type: String,
-        required: true
-    },
-    context: {
-        type: String,
-        enum: ['general', 'weather_warning'],
-        default: 'general'
-    }
+    messages: [{
+        role: {
+            type: String,
+            required: true,
+            enum: ['user', 'ai']
+        },
+        content: {
+            type: String,
+            required: true
+        },
+        tokensUsed: {
+            type: Number,
+            default: 0
+        },
+        timestamp: {
+            type: Date,
+            default: Date.now
+        }
+    }]
 }, { timestamps: true });
 
 module.exports = mongoose.model('ChatHistory', chatHistorySchema);
