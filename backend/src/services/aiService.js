@@ -35,7 +35,23 @@ const generateChatResponse = async (role, userMessage, weatherWarning = '') => {
         };
     } catch (error) {
         logger.error('AI Service Error (Chat):', error);
-        throw new ApiError(502, 'Failed to generate AI response');
+
+        // Fallback mock response so the UI remains responsive if the API key is leaked or invalid
+        let fallbackText = "I'm currently offline and unable to process your request.";
+        if (role === 'farmer') {
+            fallbackText = "👨‍🌾 Note (Offline Mode): Based on typical agricultural patterns, monitor your crop closely and consider basic organic composts. If severe symptoms persist, consult a local extension agent.";
+        } else if (role === 'shopkeeper') {
+            fallbackText = "🏪 Note (Offline Mode): It's recommended to maintain a steady inventory of seasonal high-demand fertilizers while analyzing local buying trends. Expect peak sales before monsoon seasons.";
+        }
+
+        if (weatherWarning) {
+            fallbackText += `\n\n⚠️ Also, take note of the weather: ${weatherWarning}`;
+        }
+
+        return {
+            text: fallbackText,
+            tokensUsed: 0
+        };
     }
 };
 
@@ -82,7 +98,15 @@ const analyzeImage = async (filePath, mimeType) => {
         logger.error("AI Service Error (Vision):", error);
         // Cleanup if fail
         if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-        throw new ApiError(502, 'Failed to process AI image analysis');
+        // Fallback mock JSON so the frontend remains responsive instead of crashing
+        return {
+            deficiency: "[Offline Mode] Unable to Analyze",
+            severity: "Unknown",
+            recommendedFertilizer: "Please contact local agronomist.",
+            dosagePerAcre: "N/A",
+            precautions: "Service is currently offline due to an API error.",
+            healthScore: 50
+        };
     }
 };
 
