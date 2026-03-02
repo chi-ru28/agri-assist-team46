@@ -54,7 +54,7 @@ export const Login = () => {
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                    className="mx-auto w-16 h-16 bg-agri-500 rounded-2xl flex items-center justify-center shadow-xl shadow-agri-500/30"
+                    className="mx-auto w-16 h-16 bg-agri-700 rounded-2xl flex items-center justify-center shadow-xl shadow-agri-700/30"
                 >
                     <span className="text-white text-3xl">🌱</span>
                 </motion.div>

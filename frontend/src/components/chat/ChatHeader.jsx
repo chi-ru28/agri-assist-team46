@@ -33,7 +33,7 @@ export const ChatHeader = () => {
         <header className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 shadow-sm rounded-b-2xl mb-4 transition-colors">
             {/* Left: App Logo */}
             <div className="flex items-center gap-2">
-                <div className="w-10 h-10 bg-agri-500 rounded-xl flex items-center justify-center shadow-lg shadow-agri-500/30">
+                <div className="w-10 h-10 bg-agri-700 rounded-xl flex items-center justify-center shadow-lg shadow-agri-700/30">
                     <span className="text-white font-bold text-xl">🌱</span>
                 </div>
                 <span className="font-bold text-xl hidden sm:block text-gray-800 dark:text-gray-100">AgriAssist</span>

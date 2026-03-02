@@ -39,7 +39,7 @@ export const Landing = () => {
                     animate={{ opacity: 1, x: 0 }}
                     className="flex items-center gap-2"
                 >
-                    <div className="w-10 h-10 bg-agri-500 rounded-xl flex items-center justify-center shadow-lg shadow-agri-500/30">
+                    <div className="w-10 h-10 bg-agri-700 rounded-xl flex items-center justify-center shadow-lg shadow-agri-700/30">
                         <span className="text-white font-bold text-xl">🌱</span>
                     </div>
                     <span className="font-bold text-2xl text-gray-800 dark:text-gray-100 tracking-tight">AgriAssist</span>
