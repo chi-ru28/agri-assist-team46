@@ -38,10 +38,26 @@ const generateChatResponse = async (role, userMessage, weatherWarning = '') => {
 
         // Fallback mock response so the UI remains responsive if the API key is leaked or invalid
         let fallbackText = "I'm currently offline and unable to process your request.";
+        const msgText = (userMessage || '').toLowerCase();
+
         if (role === 'farmer') {
-            fallbackText = "👨‍🌾 Note (Offline Mode): Based on typical agricultural patterns, monitor your crop closely and consider basic organic composts. If severe symptoms persist, consult a local extension agent.";
+            if (msgText.includes('fertilizer')) {
+                fallbackText = `👨‍🌾 Note (Offline Mode): For your query regarding "${userMessage}", a general rule is to use standard NPK composts. Please wait for the AI to come back online for precise dosage.`;
+            } else if (msgText.includes('pest') || msgText.includes('disease') || msgText.includes('detect')) {
+                fallbackText = `👨‍🌾 Note (Offline Mode): To address "${userMessage}", consider an organic neem oil spray as a temporary solution until I can process the specific symptoms.`;
+            } else if (msgText.includes('weather')) {
+                fallbackText = `👨‍🌾 Note (Offline Mode): I see you're asking about weather ("${userMessage}"). Make sure to check local forecasts or use the Weather Info action on your right.`;
+            } else {
+                fallbackText = `👨‍🌾 Note (Offline Mode): I received your input: "${userMessage}". Unfortunately, I am offline due to an API error and can only offer general advice right now.`;
+            }
         } else if (role === 'shopkeeper') {
-            fallbackText = "🏪 Note (Offline Mode): It's recommended to maintain a steady inventory of seasonal high-demand fertilizers while analyzing local buying trends. Expect peak sales before monsoon seasons.";
+            if (msgText.includes('stock') || msgText.includes('inventory')) {
+                fallbackText = `🏪 Note (Offline Mode): Regarding your stock query "${userMessage}", ensure you have enough core seeds and top-selling fertilizers before peak season.`;
+            } else if (msgText.includes('price') || msgText.includes('sell') || msgText.includes('demand')) {
+                fallbackText = `🏪 Note (Offline Mode): For your query "${userMessage}", it's recommended to analyze competitor local pricing until I am back online to calculate profit margins.`;
+            } else {
+                fallbackText = `🏪 Note (Offline Mode): I received your input: "${userMessage}". It's recommended to maintain a steady inventory while analyzing local buying trends since I am currently offline.`;
+            }
         }
 
         if (weatherWarning) {
