@@ -1,53 +1,45 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 const bcrypt = require('bcrypt');
 
-const userSchema = new mongoose.Schema({
+const User = sequelize.define('User', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+    },
     name: {
-        type: String,
-        required: true,
-        trim: true,
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     phone: {
-        type: String,
-        required: true,
+        type: DataTypes.STRING,
+        allowNull: false,
         unique: true,
-        trim: true,
     },
     password: {
-        type: String,
-        required: true,
-        private: true, // used by custom plugins if needed, else manually exclude
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     role: {
-        type: String,
-        enum: ['farmer', 'shopkeeper', 'admin'],
-        required: true,
+        type: DataTypes.ENUM('farmer', 'shopkeeper', 'admin'),
+        allowNull: false,
     },
     refreshToken: {
-        type: String,
+        type: DataTypes.STRING,
     }
-}, { timestamps: true });
-
-// Check if password match
-userSchema.methods.isPasswordMatch = async function (password) {
-    const user = this;
-    return bcrypt.compare(password, user.password);
-};
-
-// Hash password before saving
-userSchema.pre('save', async function () {
-    const user = this;
-    if (user.isModified('password')) {
-        user.password = await bcrypt.hash(user.password, 10);
+}, {
+    hooks: {
+        beforeSave: async (user) => {
+            if (user.changed('password')) {
+                user.password = await bcrypt.hash(user.password, 10);
+            }
+        }
     }
 });
 
-// Remove sensitive info when returning JSON
-userSchema.methods.toJSON = function () {
-    const obj = this.toObject();
-    delete obj.password;
-    delete obj.refreshToken;
-    return obj;
+User.prototype.isPasswordMatch = async function (password) {
+    return bcrypt.compare(password, this.password);
 };
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = User;

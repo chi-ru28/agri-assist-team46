@@ -1,118 +1,111 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import { useAuth } from './AuthContext';
-import { api } from '../services/api';
+import { chatAPI } from "../services/api";
+import { useTranslation } from 'react-i18next';
 
 const ChatContext = createContext();
 
-export const ChatProvider = ({ children }) => {
-    const { user } = useAuth();
+export function ChatProvider({ children }) {
+    const { i18n } = useTranslation();
     const [messages, setMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
+    const [isSpeaking, setIsSpeaking] = useState(false);
 
-    useEffect(() => {
-        // Set initial welcome message based on role
-        if (user) {
-            const welcomeText = user?.role?.toLowerCase() === 'farmer'
-                ? "Hello Farmer 👨‍🌾 How can I assist your crop today?"
-                : "Hello Shop Owner 🏪 How can I help manage your inventory today?";
+    const loadHistory = useCallback(async () => {
+        try {
+            const { data } = await chatAPI.getHistory();
+            setMessages(data.map(m => ({ role: m.role, content: m.content })));
+        } catch (err) {
+            console.error("Failed to load history:", err);
+        }
+    }, []);
 
-            setMessages([{
-                id: 1,
-                sender: 'ai',
-                text: welcomeText,
-                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    const speak = useCallback((text) => {
+        if (!window.speechSynthesis) return;
+
+        // Cancel any existing speech
+        window.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        
+        // Map i18n language to Voice lang
+        const langMap = {
+            'en': 'en-US',
+            'hi': 'hi-IN',
+            'gu': 'gu-IN'
+        };
+        utterance.lang = langMap[i18n.language] || 'en-US';
+        
+        utterance.onstart = () => setIsSpeaking(true);
+        utterance.onend = () => setIsSpeaking(false);
+        utterance.onerror = () => setIsSpeaking(false);
+
+        window.speechSynthesis.speak(utterance);
+    }, [i18n.language]);
+
+    const stopSpeaking = useCallback(() => {
+        window.speechSynthesis.cancel();
+        setIsSpeaking(false);
+    }, []);
+
+    const sendMessage = useCallback(async (text) => {
+        stopSpeaking();
+        // Add user message immediately to UI
+        setMessages(prev => [...prev, { role: "user", content: text }]);
+        setIsTyping(true);
+
+        try {
+            const { data } = await chatAPI.send(text);
+            const reply = data.reply;
+            setMessages(prev => [...prev, { role: "assistant", content: reply }]);
+            
+            // Auto-speak by default if requested
+            speak(reply);
+        } catch (err) {
+            console.error("❌ API Error:", err.response?.data || err.message);
+            // Show the REAL error in chat instead of generic message
+            const errorMsg = err.response?.data?.detail || err.message || "Connection failed";
+            setMessages(prev => [...prev, {
+                role: "assistant",
+                content: `⚠️ Error: ${errorMsg} — Check if backend is running on port 8000.`
             }]);
-        } else {
-            setMessages([]);
+            speak("I encountered an error connecting to the server.");
+        } finally {
+            setIsTyping(false);
         }
-    }, [user]);
+    }, [speak, stopSpeaking]);
 
-    const sendMessage = async (text) => {
-        if (!text.trim()) return;
-
-        // Add user message
-        const userMsg = {
-            id: Date.now(),
-            sender: 'user',
-            text,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
-
-        setMessages((prev) => [...prev, userMsg]);
+    const sendImageMessage = useCallback(async (file) => {
+        stopSpeaking();
+        // Add optimistic user message
+        setMessages(prev => [...prev, { role: "user", content: "📷 [Image Uploaded]" }]);
         setIsTyping(true);
 
         try {
-            // Real API call to generative AI via backend
-            const data = await api.chat.sendMessage(text);
-
+            const { data } = await chatAPI.analyzeImage(file);
+            const reply = data.reply;
+            setMessages(prev => [...prev, { role: "assistant", content: reply }]);
+            speak(reply);
+        } catch (err) {
+            console.error("❌ Image API Error:", err);
+            setMessages(prev => [...prev, { role: "assistant", content: "⚠️ Error analyzing image." }]);
+        } finally {
             setIsTyping(false);
-            const aiMsg = {
-                id: Date.now() + 1,
-                sender: 'ai',
-                text: data.reply || 'Sorry, I could not process that response.',
-                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            };
-            setMessages((prev) => [...prev, aiMsg]);
-        } catch (error) {
-            setIsTyping(false);
-            const errorMsg = {
-                id: Date.now() + 1,
-                sender: 'ai',
-                text: 'System Error: Unable to reach the AI assistant. Please check your connection.',
-                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            };
-            setMessages((prev) => [...prev, errorMsg]);
         }
-    };
-
-    const sendImageMessage = async (file) => {
-        if (!file) return;
-
-        // Add user message indicating upload
-        const userMsg = {
-            id: Date.now(),
-            sender: 'user',
-            text: `[Uploaded Image: ${file.name}] Can you analyze this crop image?`,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
-
-        setMessages((prev) => [...prev, userMsg]);
-        setIsTyping(true);
-
-        try {
-            const data = await api.ai.analyzeImage(file);
-
-            setIsTyping(false);
-            const aiMsg = {
-                id: Date.now() + 1,
-                sender: 'ai',
-                text: `Analysis Complete! 
-Deficiency: ${data.deficiency}
-Severity: ${data.severity}
-Fertilizer Recommended: ${data.recommendation.fertilizer}
-Dosage: ${data.recommendation.dosagePerAcre}
-Precautions: ${data.recommendation.precautions}
-Confidence: ${data.mlConfidence || data.healthScore}%`,
-                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            };
-            setMessages((prev) => [...prev, aiMsg]);
-        } catch (error) {
-            setIsTyping(false);
-            const errorMsg = {
-                id: Date.now() + 1,
-                sender: 'ai',
-                text: 'System Error: Unable to process the image. Please make sure the ML service is running.',
-                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            };
-            setMessages((prev) => [...prev, errorMsg]);
-        }
-    };
+    }, [speak, stopSpeaking]);
 
     return (
-        <ChatContext.Provider value={{ messages, isTyping, sendMessage, sendImageMessage }}>
+        <ChatContext.Provider value={{ 
+            messages, 
+            isTyping, 
+            isSpeaking, 
+            sendMessage, 
+            sendImageMessage, 
+            loadHistory, 
+            speak, 
+            stopSpeaking 
+        }}>
             {children}
         </ChatContext.Provider>
     );
-};
+}
 
 export const useChat = () => useContext(ChatContext);

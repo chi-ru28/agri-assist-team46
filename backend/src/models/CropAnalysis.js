@@ -1,23 +1,34 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-const cropAnalysisSchema = new mongoose.Schema({
+const CropAnalysis = sequelize.define('CropAnalysis', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+    },
     farmerId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
+        type: DataTypes.UUID,
+        allowNull: false,
     },
     imageUrl: {
-        type: String,
+        type: DataTypes.STRING,
     },
-    deficiency: String,
-    severity: String,
+    deficiency: {
+        type: DataTypes.STRING,
+    },
+    severity: {
+        type: DataTypes.STRING,
+    },
     recommendation: {
-        fertilizer: String,
-        dosagePerAcre: String,
-        precautions: String
+        type: DataTypes.JSONB, // { fertilizer, dosagePerAcre, precautions }
     },
-    healthScore: Number,
-    mlConfidence: Number
+    healthScore: {
+        type: DataTypes.FLOAT,
+    },
+    mlConfidence: {
+        type: DataTypes.FLOAT,
+    }
 }, { timestamps: true });
 
-module.exports = mongoose.model('CropAnalysis', cropAnalysisSchema);
+module.exports = CropAnalysis;

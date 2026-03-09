@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const aiService = require('../services/aiService');
 const mlService = require('../services/mlService');
-const CropAnalysis = require('../models/CropAnalysis');
+const { CropAnalysis } = require('../models/index');
 
 const analyzeImage = catchAsync(async (req, res) => {
     if (!req.file) {
@@ -17,7 +17,7 @@ const analyzeImage = catchAsync(async (req, res) => {
         const analysisData = await aiService.analyzeImage(req.file.path, req.file.mimetype);
 
         const cropAnalysis = await CropAnalysis.create({
-            farmerId: req.user._id,
+            farmerId: req.user.id,
             imageUrl: `/uploads/${req.file.filename}`,
             deficiency: mlPrediction.deficiency || analysisData.deficiency,
             severity: analysisData.severity,

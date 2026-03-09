@@ -1,11 +1,11 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const weatherService = require('../services/weatherService');
-const Farmer = require('../models/Farmer');
+const { Farmer } = require('../models/index');
 const ApiError = require('../utils/ApiError');
 
 const getWeather = catchAsync(async (req, res) => {
-    const farmer = await Farmer.findOne({ userId: req.user._id });
+    const farmer = await Farmer.findOne({ where: { userId: req.user.id } });
     if (!farmer) throw new ApiError(httpStatus.NOT_FOUND, 'Farmer details not found');
 
     const weatherData = await weatherService.getWeatherForecast(

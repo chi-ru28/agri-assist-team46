@@ -33,10 +33,22 @@ export const AuthProvider = ({ children }) => {
             return { success: true };
         } catch (error) {
             console.error("Login failed:", error);
-            // Returning error message dynamically based on backend layout
+
+            let errorMessage = 'Login failed. Please check your credentials.';
+            if (error.response?.data?.detail) {
+                const detail = error.response.data.detail;
+                errorMessage = typeof detail === 'string' ? detail : detail[0]?.msg || errorMessage;
+            } else if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            } else if (error.request) {
+                errorMessage = 'Frontend server or Backend server offline. Please run npm run dev and uvicorn.';
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+
             return {
                 success: false,
-                error: error.response?.data?.message || 'Login failed. Please check your credentials.'
+                error: errorMessage
             };
         }
     };
@@ -55,9 +67,21 @@ export const AuthProvider = ({ children }) => {
             return { success: true };
         } catch (error) {
             console.error("Registration failed:", error);
+
+            let errorMessage = 'Registration failed.';
+            if (error.response?.data?.detail) {
+                const detail = error.response.data.detail;
+                // FastAPI validation errors return an array, HTTPExceptions return a string
+                errorMessage = typeof detail === 'string' ? detail : detail[0]?.msg || errorMessage;
+            } else if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            } else if (error.request) {
+                errorMessage = 'Backend connection refused. Make sure uvicorn and Vite are running.';
+            }
+
             return {
                 success: false,
-                error: error.response?.data?.message || 'Registration failed.'
+                error: errorMessage
             };
         }
     };

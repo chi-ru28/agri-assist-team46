@@ -1,30 +1,20 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-const chatHistorySchema = new mongoose.Schema({
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
+const ChatHistory = sequelize.define('ChatHistory', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
     },
-    messages: [{
-        role: {
-            type: String,
-            required: true,
-            enum: ['user', 'ai']
-        },
-        content: {
-            type: String,
-            required: true
-        },
-        tokensUsed: {
-            type: Number,
-            default: 0
-        },
-        timestamp: {
-            type: Date,
-            default: Date.now
-        }
-    }]
-}, { timestamps: true });
+    userId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+    },
+    messages: {
+        type: DataTypes.JSONB, // Using JSONB for messages array
+        defaultValue: [],
+    }
+});
 
-module.exports = mongoose.model('ChatHistory', chatHistorySchema);
+module.exports = ChatHistory;

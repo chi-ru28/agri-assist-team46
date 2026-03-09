@@ -5,6 +5,8 @@ import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { ChatPage } from './pages/ChatPage';
 import { Profile } from './pages/Profile';
+import { FarmerDashboard } from './pages/FarmerDashboard';
+import { InventoryManager } from './pages/InventoryManager';
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
@@ -38,9 +40,22 @@ const App = () => {
               }
             />
             {/* Optional placeholders */}
-            <Route path="/farmer/dashboard" element={<Navigate to="/chat" />} />
-            <Route path="/shop/dashboard" element={<Navigate to="/chat" />} />
-            <Route path="/admin/dashboard" element={<Navigate to="/chat" />} />
+            <Route
+              path="/farmer/dashboard"
+              element={
+                <ProtectedRoute>
+                  <FarmerDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/shopkeeper/dashboard"
+              element={
+                <ProtectedRoute>
+                  <InventoryManager />
+                </ProtectedRoute>
+              }
+            />
             <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
         </Router>

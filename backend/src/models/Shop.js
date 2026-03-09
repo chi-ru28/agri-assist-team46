@@ -1,26 +1,29 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-const shopSchema = new mongoose.Schema({
+const Shop = sequelize.define('Shop', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+    },
     userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
-        unique: true
+        type: DataTypes.UUID,
+        allowNull: false,
+        unique: true,
     },
     shopName: {
-        type: String,
-        default: ''
+        type: DataTypes.STRING,
+        defaultValue: '',
     },
     address: {
-        type: String,
-        default: ''
+        type: DataTypes.STRING,
+        defaultValue: '',
     },
     location: {
-        type: { type: String, default: 'Point' },
-        coordinates: { type: [Number], default: [0, 0] }
+        type: DataTypes.JSONB,
+        defaultValue: { type: 'Point', coordinates: [0, 0] },
     }
 }, { timestamps: true });
 
-shopSchema.index({ location: '2dsphere' });
-
-module.exports = mongoose.model('Shop', shopSchema);
+module.exports = Shop;

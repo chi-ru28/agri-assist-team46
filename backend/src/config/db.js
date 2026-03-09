@@ -1,13 +1,17 @@
-const mongoose = require('mongoose');
-const config = require('./env');
+const sequelize = require('./database');
 const logger = require('../utils/logger');
+require('../models/index'); // Load models and associations
 
 const connectDB = async () => {
     try {
-        const conn = await mongoose.connect(config.mongoose.url, config.mongoose.options);
-        logger.info(`MongoDB Connected: ${conn.connection.host}`);
+        await sequelize.authenticate();
+        logger.info('PostgreSQL Connected successfully via Sequelize');
+        
+        // Auto-create/sync tables
+        await sequelize.sync({ alter: true });
+        logger.info('Database tables synchronized');
     } catch (error) {
-        logger.error(`Error connecting to MongoDB: ${error.message}`);
+        logger.error(`Error connecting to PostgreSQL: ${error.message}`);
         process.exit(1);
     }
 };

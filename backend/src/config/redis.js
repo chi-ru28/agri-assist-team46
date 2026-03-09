@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const config = require('../config/env');
 const logger = require('../utils/logger');
 let redisClient;

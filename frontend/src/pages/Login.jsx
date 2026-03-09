@@ -1,10 +1,9 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { motion } from 'framer-motion';
-import { PasswordInput } from '../components/auth/PasswordInput';
+import { PasswordInput, getPasswordStrength } from '../components/auth/PasswordInput';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 export const Login = () => {
+    const { t } = useTranslation();
     const [role, setRole] = useState('Farmer');
     const [formData, setFormData] = useState({
         identifier: '',
@@ -24,6 +23,13 @@ export const Login = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+
+        const pwdStrength = getPasswordStrength(formData.password);
+        if (pwdStrength.label !== 'Strong') {
+            setError(`Your password is ${pwdStrength.label}. You must enter a Strong password to continue.`);
+            return;
+        }
+
         setLoading(true);
         setError('');
 
@@ -50,6 +56,9 @@ export const Login = () => {
             <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-72 h-72 rounded-full bg-green-200/50 dark:bg-green-900/30 blur-3xl opacity-50 pointer-events-none"></div>
 
             <div className="sm:mx-auto sm:w-full sm:max-w-[400px] relative z-10">
+                <div className="flex justify-end mb-4 px-4 sm:px-0">
+                    <LanguageSwitcher />
+                </div>
                 <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
@@ -59,10 +68,10 @@ export const Login = () => {
                     <span className="text-white text-3xl">🌱</span>
                 </motion.div>
                 <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-gray-100">
-                    Sign in to AgriAssist
+                    {t('login')}
                 </h2>
                 <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-                    Welcome back to your dashboard
+                    {t('tagline')}
                 </p>
             </div>
 
@@ -83,7 +92,7 @@ export const Login = () => {
                                 : 'bg-gray-50 text-gray-500 border-2 border-transparent hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700'
                                 }`}
                         >
-                            <span>👨‍🌾</span> Farmer
+                            <span>👨‍🌾</span> {t('farmer')}
                         </button>
                         <button
                             type="button"
@@ -93,14 +102,14 @@ export const Login = () => {
                                 : 'bg-gray-50 text-gray-500 border-2 border-transparent hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700'
                                 }`}
                         >
-                            <span>🏪</span> Shopkeeper
+                            <span>🏪</span> {t('shopkeeper')}
                         </button>
                     </div>
 
                     <form className="space-y-2" onSubmit={handleLogin}>
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Email or Phone Number
+                                {t('phone')}
                             </label>
                             <input
                                 type="text"
@@ -132,7 +141,7 @@ export const Login = () => {
                             disabled={loading}
                             className="w-full flex justify-center py-3 px-4 mt-8 border border-transparent rounded-xl shadow-[0_4px_14px_0_rgba(34,197,94,0.39)] text-sm font-medium text-white bg-agri-500 hover:bg-agri-600 hover:shadow-[0_6px_20px_rgba(34,197,94,0.23)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-agri-500 transition-all active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
-                            {loading ? 'Signing in...' : `Sign in as ${role}`}
+                            {loading ? '...' : `${t('login')} (${t(role.toLowerCase())})`}
                         </button>
                     </form>
 

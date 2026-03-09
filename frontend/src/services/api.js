@@ -35,9 +35,28 @@ export const api = {
         }
     },
     chat: {
-        sendMessage: async (message) => {
-            const response = await apiClient.post('/chat', { message });
-            return response.data;
+        getHistory: async () => {
+            const response = await apiClient.get('/chat/history');
+            return response; // Return response object to match ChatContext expectation
+        },
+        clearHistory: async () => {
+            const response = await apiClient.delete('/chat/history');
+            return response;
+        },
+        send: async (text) => {
+            const response = await apiClient.post('/chat/farmer', { content: text });
+            return response;
+        },
+        analyzeImage: async (imageFile) => {
+            const formData = new FormData();
+            formData.append('image', imageFile);
+
+            const response = await apiClient.post('/ai/analyze', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            return response;
         }
     },
     ai: {
@@ -58,5 +77,9 @@ export const api = {
         }
     }
 };
+
+export const authAPI = api.auth;
+export const chatAPI = api.chat;
+export const aiAPI = api.ai;
 
 export default apiClient;

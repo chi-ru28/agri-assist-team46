@@ -14,6 +14,7 @@ const envVarsSchema = Joi.object()
         GEMINI_API_KEY: Joi.string().required().description('Google Gemini API Key'),
         OPENAI_API_KEY: Joi.string().required().description('OpenAI API Key'),
         REDIS_URL: Joi.string().default('redis://localhost:6379').description('Redis URL for caching'),
+        DATABASE_URL: Joi.string().required().description('PostgreSQL connection string'),
     })
     .unknown();
 
@@ -30,6 +31,7 @@ module.exports = {
         url: envVars.MONGO_URI,
         options: {},
     },
+    databaseUrl: envVars.DATABASE_URL,
     jwt: {
         secret: envVars.JWT_SECRET,
         accessExpirationMinutes: envVars.JWT_ACCESS_EXPIRATION_MINUTES,

@@ -1,15 +1,13 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const authService = require('../services/authService');
-const User = require('../models/User');
-const Farmer = require('../models/Farmer');
-const Shop = require('../models/Shop');
+const { User, Farmer, Shop } = require('../models/index');
 const ApiError = require('../utils/ApiError');
 
 const register = catchAsync(async (req, res) => {
     const { name, phone, password, role, ...roleData } = req.body;
 
-    if (await User.findOne({ phone })) {
+    if (await User.findOne({ where: { phone } })) {
         throw new ApiError(httpStatus.BAD_REQUEST, 'Phone number already registered');
     }
 
@@ -17,17 +15,17 @@ const register = catchAsync(async (req, res) => {
 
     if (role === 'farmer') {
         await Farmer.create({
-            userId: user._id,
+            userId: user.id,
             landSize: roleData.landSize,
             address: roleData.address,
-            location: { type: 'Point', coordinates: [0, 0] } // Mock GeoJSON
+            location: { type: 'Point', coordinates: [0, 0] }
         });
     } else if (role === 'shopkeeper') {
         await Shop.create({
-            userId: user._id,
+            userId: user.id,
             shopName: roleData.shopName,
             address: roleData.address,
-            location: { type: 'Point', coordinates: [0, 0] } // Mock GeoJSON
+            location: { type: 'Point', coordinates: [0, 0] }
         });
     }
 
@@ -43,7 +41,7 @@ const login = catchAsync(async (req, res) => {
 });
 
 const logout = catchAsync(async (req, res) => {
-    await authService.logout(req.user._id);
+    await authService.logout(req.user.id);
     res.status(httpStatus.NO_CONTENT).send();
 });
 

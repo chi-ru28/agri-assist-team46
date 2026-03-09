@@ -1,8 +1,6 @@
 import { useState } from 'react';
 
 const SVGShow = () => (
-    // Actually SVG for hide (with strikethrough) usually means "click to hide", but based on standard: 
-    // Let's just use what user gave us directly
     <svg xmlns="http://www.w3.org/2000/svg" height="15.6px" viewBox="0 -960 960 960" width="15.6px" fill="currentColor">
         <path d="M168-432q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35ZM96-192v-72h768v72H96Zm299-275q-35-35-35-85t35-85q35-35 85-35t85 35q35 35 35 85t-35 85q-35 35-85 35t-85-35Zm312 0q-35-35-35-85t35-85q35-35 85-35t85 35q35 35 35 85t-35 85q-35 35-85 35t-85-35Z" />
     </svg>
@@ -14,25 +12,24 @@ const SVGHide = () => (
     </svg>
 );
 
+export const getPasswordStrength = (pwd) => {
+    let score = 0;
+    if (!pwd) return { label: '', color: 'bg-gray-200', text: '' };
+    if (pwd.length > 5) score += 1;
+    if (pwd.length > 8) score += 1;
+    if (/[A-Z]/.test(pwd)) score += 1;
+    if (/[0-9]/.test(pwd)) score += 1;
+    if (/[^A-Za-z0-9]/.test(pwd)) score += 1;
+
+    if (score <= 2) return { label: 'Weak', color: 'bg-red-500', text: 'text-red-500', width: 'w-1/3' };
+    if (score <= 4) return { label: 'Medium', color: 'bg-yellow-500', text: 'text-yellow-500', width: 'w-2/3' };
+    return { label: 'Strong', color: 'bg-green-500', text: 'text-green-500', width: 'w-full' };
+};
+
 export const PasswordInput = ({ name, value, onChange, placeholder, label = "Password", showForgotPassword = false }) => {
     const [showPassword, setShowPassword] = useState(false);
+    const strength = value ? getPasswordStrength(value) : null;
 
-    // Calculate password strength dynamically
-    const getStrength = (pwd) => {
-        let score = 0;
-        if (!pwd) return { label: '', color: 'bg-gray-200', text: '' };
-        if (pwd.length > 5) score += 1;
-        if (pwd.length > 8) score += 1;
-        if (/[A-Z]/.test(pwd)) score += 1;
-        if (/[0-9]/.test(pwd)) score += 1;
-        if (/[^A-Za-z0-9]/.test(pwd)) score += 1;
-
-        if (score <= 2) return { label: 'Weak', color: 'bg-red-500', text: 'text-red-500', width: 'w-1/3' };
-        if (score <= 4) return { label: 'Medium', color: 'bg-yellow-500', text: 'text-yellow-500', width: 'w-2/3' };
-        return { label: 'Strong', color: 'bg-green-500', text: 'text-green-500', width: 'w-full' };
-    };
-
-    const strength = value ? getStrength(value) : null;
 
     return (
         <div className="mb-4">
@@ -53,7 +50,7 @@ export const PasswordInput = ({ name, value, onChange, placeholder, label = "Pas
                     required
                     value={value}
                     onChange={onChange}
-                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-agri-500 focus:border-transparent outline-none transition-all dark:text-white pr-12"
+                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-agri-500 focus:border-transparent outline-none transition-all dark:text-white pr-12 hide-password-toggle"
                     placeholder={placeholder}
                 />
                 <button

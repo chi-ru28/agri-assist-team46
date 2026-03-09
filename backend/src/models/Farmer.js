@@ -1,26 +1,29 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-const farmerSchema = new mongoose.Schema({
+const Farmer = sequelize.define('Farmer', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+    },
     userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
-        unique: true
+        type: DataTypes.UUID,
+        allowNull: false,
+        unique: true,
     },
     landSize: {
-        type: Number,
-        default: 0
+        type: DataTypes.FLOAT,
+        defaultValue: 0,
     },
     address: {
-        type: String,
-        default: ''
+        type: DataTypes.STRING,
+        defaultValue: '',
     },
     location: {
-        type: { type: String, default: 'Point' },
-        coordinates: { type: [Number], default: [0, 0] }
+        type: DataTypes.JSONB, // Storing { type: 'Point', coordinates: [lng, lat] }
+        defaultValue: { type: 'Point', coordinates: [0, 0] },
     }
 }, { timestamps: true });
 
-farmerSchema.index({ location: '2dsphere' });
-
-module.exports = mongoose.model('Farmer', farmerSchema);
+module.exports = Farmer;

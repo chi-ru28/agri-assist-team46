@@ -220,7 +220,73 @@ const analyzeImage = async (filePath, mimeType) => {
     }
 };
 
+const generateMultimodalChatResponse = async (role, userMessage, file, weatherWarning = '') => {
+    try {
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+        let systemPrompt = `You are a helpful AI agriculture and shop assistant. Analyze the image and the user's message.`;
+        if (role === 'farmer') {
+            systemPrompt = `You are "AgriAssist", a professional agriculture AI assistant built to support farmers. Analyze the attached crop/plant image and answer the user's question. If asked to diagnose, provide deficiency/disease insights, recommended actions, and precautions. Keep answers rural-farmer friendly.`;
+        } else if (role === 'shopkeeper') {
+            systemPrompt = `You are ShopAssist, a retail assistant. Analyze the attached product/inventory image and the user's query. Provide relevant stock, condition, or management advice.`;
+        }
+
+        if (weatherWarning) {
+            systemPrompt += `\nCRITICAL CONTEXT: ${weatherWarning}.`;
+        }
+
+        const prompt = `${systemPrompt}\nUser Message: ${userMessage}`;
+
+        // Read file directly from path provided by Multer
+        const imagePart = fileToGenerativePart(file.path, file.mimetype);
+
+        const result = await model.generateContent([prompt, imagePart]);
+        const responseText = await result.response.text();
+
+        // Cleanup temporary image
+        if (fs.existsSync(file.path)) {
+            fs.unlinkSync(file.path);
+        }
+
+        // Parse language similarly to standard text
+        let detectedLang = 'en';
+        try {
+            const detected = langdetect.detect(userMessage || responseText);
+            if (detected && detected.length > 0) detectedLang = detected[0].lang;
+        } catch (e) { }
+
+        // Optionally generate audio if needed
+        const audioResponse = await openai.audio.speech.create({
+            model: "tts-1",
+            voice: "alloy",
+            input: responseText.slice(0, 4000), // truncation for TTS
+        });
+        const audioFileName = `${uuidv4()}.mp3`;
+        const audioDir = path.join(__dirname, '..', '..', 'public', 'audio');
+        if (!fs.existsSync(audioDir)) fs.mkdirSync(audioDir, { recursive: true });
+        const audioFilePath = path.join(audioDir, audioFileName);
+        const buffer = Buffer.from(await audioResponse.arrayBuffer());
+        await fs.promises.writeFile(audioFilePath, buffer);
+
+        return {
+            text: responseText,
+            audioUrl: `/audio/${audioFileName}`,
+            detectedLanguage: detectedLang,
+            tokensUsed: prompt.length + responseText.length,
+            analysis: null // can parse structured JSON if strictly needed, but conversational is fine
+        };
+    } catch (error) {
+        logger.error("AI Service Error (Multimodal Chat):", error);
+        if (file && fs.existsSync(file.path)) fs.unlinkSync(file.path);
+        return {
+            text: "I'm sorry, I couldn't analyze the image right now due to a system error.",
+            tokensUsed: 0
+        };
+    }
+};
+
 module.exports = {
     generateChatResponse,
-    analyzeImage
+    analyzeImage,
+    generateMultimodalChatResponse
 };
