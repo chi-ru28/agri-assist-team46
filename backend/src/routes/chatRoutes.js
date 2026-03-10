@@ -15,6 +15,7 @@ const chatValidation = {
 };
 
 router.get('/history', auth, authorize('farmer', 'shopkeeper'), chatController.getHistory);
+router.get('/report', auth, authorize('farmer', 'shopkeeper'), chatController.generateReport);
 router.post('/', auth, authorize('farmer', 'shopkeeper'), upload.single('image'), validate(chatValidation), chatController.chat);
 
 module.exports = router;

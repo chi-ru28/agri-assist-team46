@@ -1,43 +1,31 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Product = sequelize.define('Product', {
+const Reminder = sequelize.define('Reminder', {
     id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
     },
-    shopId: {
+    userId: {
         type: DataTypes.UUID,
         allowNull: false,
     },
-    name: {
+    title: {
         type: DataTypes.STRING,
         allowNull: false,
     },
     description: {
         type: DataTypes.TEXT,
     },
-    price: {
-        type: DataTypes.FLOAT,
+    dueDate: {
+        type: DataTypes.DATE,
         allowNull: false,
     },
-    category: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    inventoryCount: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
-    },
-    isAvailable: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true,
-    },
-    isOrganic: {
+    isCompleted: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
     }
 }, { timestamps: true });
 
-module.exports = Product;
+module.exports = Reminder;

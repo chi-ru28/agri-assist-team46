@@ -1,5 +1,6 @@
 import { useChat } from '../../context/ChatContext';
 import { useTranslation } from 'react-i18next';
+import { Leaf, CloudSun, Store, ShieldAlert, FileText } from 'lucide-react';
 
 export const FarmerQuickActions = ({ onItemClick }) => {
     const { t } = useTranslation();
@@ -10,6 +11,7 @@ export const FarmerQuickActions = ({ onItemClick }) => {
         { label: t('weather_info'), icon: <CloudSun size={18} className="text-blue-500" />, query: 'What is the weather forecast for today?' },
         { label: t('nearby_shops'), icon: <Store size={18} className="text-orange-500" />, query: 'Find me nearby agricultural shops.' },
         { label: t('pesticide_help'), icon: <ShieldAlert size={18} className="text-red-500" />, query: 'I need help identifying a pesticide.' },
+        { label: t('report'), icon: <FileText size={18} className="text-purple-500" />, action: 'report' },
     ];
 
     return (
@@ -19,8 +21,12 @@ export const FarmerQuickActions = ({ onItemClick }) => {
                 <button
                     key={idx}
                     onClick={() => {
-                        sendMessage(action.query);
-                        if (onItemClick) onItemClick();
+                        if (action.action === 'report') {
+                            onItemClick && onItemClick('report');
+                        } else {
+                            sendMessage(action.query);
+                            if (onItemClick) onItemClick();
+                        }
                     }}
                     className="flex items-center gap-3 p-3 lg:p-4 rounded-2xl bg-white hover:bg-agri-50 dark:bg-gray-800 dark:hover:bg-gray-700/80 transition-all border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md group text-left w-full"
                 >

@@ -5,6 +5,7 @@ const Farmer = require('./Farmer');
 const Shop = require('./Shop');
 const Product = require('./Product');
 const CropAnalysis = require('./CropAnalysis');
+const Reminder = require('./Reminder');
 
 // Define Associations
 User.hasOne(Farmer, { foreignKey: 'userId', as: 'farmer' });
@@ -22,6 +23,9 @@ ChatHistory.belongsTo(User, { foreignKey: 'userId' });
 User.hasMany(CropAnalysis, { foreignKey: 'farmerId', as: 'cropAnalyses' });
 CropAnalysis.belongsTo(User, { foreignKey: 'farmerId' });
 
+User.hasMany(Reminder, { foreignKey: 'userId', as: 'reminders' });
+Reminder.belongsTo(User, { foreignKey: 'userId' });
+
 module.exports = {
     sequelize,
     User,
@@ -29,5 +33,6 @@ module.exports = {
     Farmer,
     Shop,
     Product,
-    CropAnalysis
+    CropAnalysis,
+    Reminder
 };

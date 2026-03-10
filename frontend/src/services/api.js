@@ -44,17 +44,19 @@ export const api = {
             return response;
         },
         send: async (text) => {
-            const response = await apiClient.post('/chat/farmer', { content: text });
+            const response = await apiClient.post('/chat', { message: text });
             return response;
         },
-        analyzeImage: async (imageFile) => {
+        getReport: async () => {
+            const response = await apiClient.get('/chat/report');
+            return response.data;
+        },
+        analyzeImage: async (imageFile, text = '') => {
             const formData = new FormData();
             formData.append('image', imageFile);
-
-            const response = await apiClient.post('/ai/analyze', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
+            formData.append('message', text);
+            const response = await apiClient.post('/chat', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
             });
             return response;
         }

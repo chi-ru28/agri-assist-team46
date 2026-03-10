@@ -8,6 +8,7 @@ export function ChatProvider({ children }) {
     const [messages, setMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
     const [isSpeaking, setIsSpeaking] = useState(false);
+    const [report, setReport] = useState(null);
 
     const loadHistory = useCallback(async () => {
         try {
@@ -25,7 +26,7 @@ export function ChatProvider({ children }) {
         window.speechSynthesis.cancel();
 
         const utterance = new SpeechSynthesisUtterance(text);
-        
+
         // Map i18n language to Voice lang
         const langMap = {
             'en': 'en-US',
@@ -33,7 +34,7 @@ export function ChatProvider({ children }) {
             'gu': 'gu-IN'
         };
         utterance.lang = langMap[i18n.language] || 'en-US';
-        
+
         utterance.onstart = () => setIsSpeaking(true);
         utterance.onend = () => setIsSpeaking(false);
         utterance.onerror = () => setIsSpeaking(false);
@@ -56,9 +57,16 @@ export function ChatProvider({ children }) {
             const { data } = await chatAPI.send(text);
             const reply = data.reply;
             setMessages(prev => [...prev, { role: "assistant", content: reply }]);
-            
-            // Auto-speak by default if requested
-            speak(reply);
+
+            // Auto-speak using backend audio if available, else local TTS
+            if (data.audioUrl) {
+                const audio = new Audio(data.audioUrl);
+                audio.play();
+                setIsSpeaking(true);
+                audio.onended = () => setIsSpeaking(false);
+            } else {
+                speak(reply);
+            }
         } catch (err) {
             console.error("❌ API Error:", err.response?.data || err.message);
             // Show the REAL error in chat instead of generic message
@@ -73,17 +81,23 @@ export function ChatProvider({ children }) {
         }
     }, [speak, stopSpeaking]);
 
-    const sendImageMessage = useCallback(async (file) => {
+    const sendImageMessage = useCallback(async (file, text = '') => {
         stopSpeaking();
-        // Add optimistic user message
-        setMessages(prev => [...prev, { role: "user", content: "📷 [Image Uploaded]" }]);
+        setMessages(prev => [...prev, { role: "user", content: text || "📷 [Image Uploaded]" }]);
         setIsTyping(true);
 
         try {
-            const { data } = await chatAPI.analyzeImage(file);
+            const { data } = await chatAPI.analyzeImage(file, text);
             const reply = data.reply;
             setMessages(prev => [...prev, { role: "assistant", content: reply }]);
-            speak(reply);
+            if (data.audioUrl) {
+                const audio = new Audio(data.audioUrl);
+                audio.play();
+                setIsSpeaking(true);
+                audio.onended = () => setIsSpeaking(false);
+            } else {
+                speak(reply);
+            }
         } catch (err) {
             console.error("❌ Image API Error:", err);
             setMessages(prev => [...prev, { role: "assistant", content: "⚠️ Error analyzing image." }]);
@@ -92,16 +106,29 @@ export function ChatProvider({ children }) {
         }
     }, [speak, stopSpeaking]);
 
+    const generateReport = useCallback(async () => {
+        try {
+            const data = await chatAPI.getReport();
+            setReport(data);
+            return data;
+        } catch (err) {
+            console.error("Failed to generate report:", err);
+            return null;
+        }
+    }, []);
+
     return (
-        <ChatContext.Provider value={{ 
-            messages, 
-            isTyping, 
-            isSpeaking, 
-            sendMessage, 
-            sendImageMessage, 
-            loadHistory, 
-            speak, 
-            stopSpeaking 
+        <ChatContext.Provider value={{
+            messages,
+            isTyping,
+            isSpeaking,
+            sendMessage,
+            sendImageMessage,
+            loadHistory,
+            speak,
+            stopSpeaking,
+            generateReport,
+            report
         }}>
             {children}
         </ChatContext.Provider>

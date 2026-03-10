@@ -16,6 +16,7 @@ const chatRoutes = require('./routes/chatRoutes');
 const aiRoutes = require('./routes/aiRoutes');
 const shopRoutes = require('./routes/shopRoutes');
 const weatherRoutes = require('./routes/weatherRoutes');
+const reminderRoutes = require('./routes/reminderRoutes');
 
 const app = express();
 
@@ -52,6 +53,7 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/shop', shopRoutes);
 app.use('/api/weather', weatherRoutes);
+app.use('/api/reminders', reminderRoutes);
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/audio', express.static(path.join(__dirname, '..', 'public', 'audio')));

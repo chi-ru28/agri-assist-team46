@@ -4,6 +4,7 @@ const aiService = require('../services/aiService');
 const weatherService = require('../services/weatherService');
 const { ChatHistory, Farmer } = require('../models/index');
 const logger = require('../utils/logger');
+const reportService = require('../services/reportService');
 
 const getHistory = catchAsync(async (req, res) => {
     const chatHistory = await ChatHistory.findOne({ where: { userId: req.user.id } });
@@ -63,7 +64,19 @@ const chat = catchAsync(async (req, res) => {
     });
 });
 
+const generateReport = catchAsync(async (req, res) => {
+    const chatHistory = await ChatHistory.findOne({ where: { userId: req.user.id } });
+    if (!chatHistory || !chatHistory.messages.length) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'No chat history found to generate report');
+    }
+
+    const report = await reportService.generateChatReport(req.user.id, chatHistory.messages);
+    res.status(httpStatus.OK).send(report);
+});
+
+
 module.exports = {
     chat,
-    getHistory
+    getHistory,
+    generateReport
 };
