@@ -3,7 +3,58 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --primary: #10b981;
+    --primary-hover: #059669;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.3);
+  }
+
+  .dark {
+    --primary: #34d399;
+    --primary-hover: #10b981;
+    --glass-bg: rgba(17, 24, 39, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+  }
+
   body {
-    @apply bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100;
+    @apply bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Premium Background Gradients */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -10%;
+    left: -10%;
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply backdrop-blur-md bg-opacity-70 border;
+    background-color: var(--glass-bg);
+    border-color: var(--glass-border);
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .premium-gradient {
+    @apply bg-gradient-to-br from-emerald-500 to-teal-600;
   }
 }

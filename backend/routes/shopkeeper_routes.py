@@ -28,15 +28,15 @@ async def toggle_inventory(request: InventoryToggleRequest, user_data: dict = De
         raise HTTPException(status_code=403, detail="Not authorized as shopkeeper")
     
     item_uid = UUID(request.item_id)
-    shop = db.query(Shop).filter(Shop.userId == UUID(user_data.get("sub"))).first()
+    shop = db.query(Shop).filter(Shop.user_id == UUID(user_data.get("sub"))).first()
     if not shop:
         raise HTTPException(status_code=404, detail="Shop not found for this user")
 
-    product = db.query(Product).filter(Product.id == item_uid, Product.shopId == shop.id).first()
+    product = db.query(Product).filter(Product.id == item_uid, Product.shop_id == shop.id).first()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
 
-    product.isAvailable = request.is_available
+    product.is_available = request.is_available
     db.commit()
     
     return {"message": "Inventory updated successfully"}
@@ -50,11 +50,11 @@ async def tag_inventory(request: InventoryTagRequest, user_data: dict = Depends(
         raise HTTPException(status_code=400, detail="Invalid tag")
         
     item_uid = UUID(request.item_id)
-    shop = db.query(Shop).filter(Shop.userId == UUID(user_data.get("sub"))).first()
+    shop = db.query(Shop).filter(Shop.user_id == UUID(user_data.get("sub"))).first()
     if not shop:
         raise HTTPException(status_code=404, detail="Shop not found for this user")
 
-    product = db.query(Product).filter(Product.id == item_uid, Product.shopId == shop.id).first()
+    product = db.query(Product).filter(Product.id == item_uid, Product.shop_id == shop.id).first()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
 
@@ -78,8 +78,10 @@ async def get_history(user_data: dict = Depends(get_current_user), db: Session =
     for h in histories:
         result.append({
             "id": str(h.id),
-            "userId": str(h.userId),
-            "messages": h.messages
+            "user_id": str(h.user_id),
+            "message": h.message,
+            "response": h.response,
+            "timestamp": h.timestamp
         })
         
     return {"history": result}

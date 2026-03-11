@@ -1,7 +1,9 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 export const MessageBubble = ({ message }) => {
-    const isAI = message.sender === 'ai';
+    const { t } = useTranslation();
+    const isAI = message.role === 'assistant';
 
     return (
         <motion.div
@@ -21,7 +23,7 @@ export const MessageBubble = ({ message }) => {
                 {/* Message Content Container */}
                 <div className={`flex flex-col w-full min-w-0 pt-1`}>
                     <div className="font-semibold text-[13px] text-gray-800 dark:text-gray-200 mb-1">
-                        {isAI ? 'AgriAssist' : 'You'} <span className="text-[11px] text-gray-400 dark:text-gray-500 font-normal ml-2">{message.timestamp}</span>
+                        {isAI ? t('chatbot_name') : t('you')} <span className="text-[11px] text-gray-400 dark:text-gray-500 font-normal ml-2">{message.timestamp}</span>
                     </div>
 
                     {/* Image Attachment Preview */}

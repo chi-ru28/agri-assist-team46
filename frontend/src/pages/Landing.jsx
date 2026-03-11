@@ -1,11 +1,8 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Leaf, Mic, Globe, ShieldCheck, ArrowRight, Activity, CloudSun, Users } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
-import LanguageSwitcher from '../components/LanguageSwitcher';
 
 export const Landing = () => {
-    const { t } = useTranslation();
     // Animation variants
     const fadeIn = {
         hidden: { opacity: 0, y: 20 },
@@ -51,14 +48,13 @@ export const Landing = () => {
                 <motion.div
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="flex gap-4 items-center"
+                    className="flex gap-4"
                 >
-                    <LanguageSwitcher />
                     <Link to="/login" className="px-5 py-2.5 text-gray-700 dark:text-gray-200 font-medium hover:text-agri-600 dark:hover:text-agri-400 transition-colors hidden sm:block">
-                        {t('login')}
+                        Sign In
                     </Link>
                     <Link to="/register" className="px-5 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-medium rounded-full shadow-lg shadow-gray-900/20 dark:shadow-white/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
-                        {t('register')} <ArrowRight size={16} />
+                        Get Started <ArrowRight size={16} />
                     </Link>
                 </motion.div>
             </nav>
@@ -105,9 +101,9 @@ export const Landing = () => {
                         initial="hidden" animate="visible" variants={fadeIn}
                         className="text-5xl md:text-7xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-[1.1] mb-6"
                     >
-                        {t('app_name')} <br className="hidden md:block" />
+                        Empowering Farmers <br className="hidden md:block" />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-agri-500 to-green-400">
-                            {t('tagline')}
+                            Through AI Intelligence
                         </span>
                     </motion.h1>
 

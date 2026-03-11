@@ -1,4 +1,6 @@
 import bcrypt
+import random
+import string
 from datetime import datetime, timedelta
 from jose import jwt
 import os
@@ -25,3 +27,7 @@ def create_access_token(data: dict):
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
+def generate_otp(length: int = 4) -> str:
+    """Generate a random numeric OTP."""
+    return "".join(random.choices(string.digits, k=length))

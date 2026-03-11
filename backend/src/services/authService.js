@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const config = require('../config/env');
-const { User } = require('../models/index');
+const User = require('../models/User');
 const ApiError = require('../utils/ApiError');
 
 const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
@@ -37,10 +37,10 @@ const generateAuthTokens = async (user) => {
     };
 };
 
-const loginUserWithPhoneAndPassword = async (phone, password) => {
-    const user = await User.findOne({ where: { phone } });
+const loginUserWithEmailAndPassword = async (email, password) => {
+    const user = await User.findOne({ where: { email } });
     if (!user || !(await user.isPasswordMatch(password))) {
-        throw new ApiError(401, 'Incorrect phone or password');
+        throw new ApiError(401, 'Incorrect email or password');
     }
     return user;
 };
@@ -57,6 +57,6 @@ const logout = async (userId) => {
 module.exports = {
     generateToken,
     generateAuthTokens,
-    loginUserWithPhoneAndPassword,
+    loginUserWithEmailAndPassword,
     logout
 };

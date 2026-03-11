@@ -1,8 +1,8 @@
+import { MessageSquare, Plus, PanelLeftClose, PanelLeft, Settings, HelpCircle } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 export const ChatSidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
-    const { t } = useTranslation();
     const { user } = useAuth();
     const [recentChats, setRecentChats] = useState([
         { id: 1, title: 'Crop Health Diagnosis', date: 'Today' },
@@ -45,13 +45,13 @@ export const ChatSidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
             <div className="px-3 pb-4">
                 <button className="flex items-center gap-3 w-max px-4 py-2.5 rounded-full bg-gray-200/50 hover:bg-gray-200 dark:bg-gray-800/50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 transition-colors text-[14px] font-medium border border-transparent">
                     <Plus size={18} />
-                    {t('new_chat')}
+                    New chat
                 </button>
             </div>
 
             <div className="flex-1 overflow-y-auto px-3 mt-4 space-y-6 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700">
                 <div className="space-y-1">
-                    <div className="px-3 text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">{t('recent')}</div>
+                    <div className="px-3 text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Recent</div>
                     {recentChats.map(chat => (
                         <button key={chat.id} className="w-full text-left px-3 py-2.5 rounded-lg hover:bg-gray-200/50 dark:hover:bg-gray-800/50 text-gray-700 dark:text-gray-200 text-[14px] truncate flex items-center gap-3 transition-colors">
                             <MessageSquare size={16} className="flex-shrink-0 opacity-70" />
@@ -64,11 +64,11 @@ export const ChatSidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
             <div className="p-3 space-y-1 border-t border-gray-200 dark:border-gray-800">
                 <button className="w-full text-left px-3 py-2.5 rounded-lg hover:bg-gray-200/50 dark:hover:bg-gray-800/50 text-gray-700 dark:text-gray-200 text-[14px] flex items-center gap-3 transition-colors">
                     <HelpCircle size={18} className="opacity-70" />
-                    {t('help')}
+                    Help
                 </button>
                 <button className="w-full text-left px-3 py-2.5 rounded-lg hover:bg-gray-200/50 dark:hover:bg-gray-800/50 text-gray-700 dark:text-gray-200 text-[14px] flex items-center gap-3 transition-colors">
                     <Settings size={18} className="opacity-70" />
-                    {t('settings')}
+                    Settings
                 </button>
             </div>
         </div>

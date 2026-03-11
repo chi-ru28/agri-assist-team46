@@ -1,26 +1,19 @@
 const Joi = require('joi');
 
-const phoneOrEmail = Joi.string().required().custom((value, helpers) => {
-    // If it contains an '@', treat it as email with no length limit
-    if (value.includes('@')) {
-        return value;
-    }
-    // If it's purely numerical, enforce 10 digits
-    if (/^\d+$/.test(value)) {
-        if (value.length !== 10) {
-            return helpers.message('Phone number must be exactly 10 digits');
-        }
-        return value;
-    }
-    // Otherwise fallback if they entered other chars
+const strongPassword = (value, helpers) => {
+    if (value.length < 8) return helpers.message('Password must be at least 8 characters long');
+    if (!/[a-z]/.test(value)) return helpers.message('Password must contain at least one lowercase letter');
+    if (!/[A-Z]/.test(value)) return helpers.message('Password must contain at least one uppercase letter');
+    if (!/[0-9]/.test(value)) return helpers.message('Password must contain at least one number');
+    if (!/[@#$%^&+=!_]/.test(value)) return helpers.message('Password must contain at least one special character (@#$%^&+=!_)');
     return value;
-});
+};
 
 const registerUser = {
     body: Joi.object().keys({
         name: Joi.string().required(),
-        phone: phoneOrEmail,
-        password: Joi.string().required().min(8),
+        email: Joi.string().email().required(),
+        password: Joi.string().required().custom(strongPassword),
         role: Joi.string().required().valid('farmer', 'shopkeeper', 'admin'),
         landSize: Joi.number().when('role', { is: 'farmer', then: Joi.required() }),
         address: Joi.string().when('role', { is: 'shopkeeper', then: Joi.required() }),
@@ -30,7 +23,7 @@ const registerUser = {
 
 const loginUser = {
     body: Joi.object().keys({
-        phone: Joi.string().required(),
+        email: Joi.string().required(),
         password: Joi.string().required(),
     }),
 };

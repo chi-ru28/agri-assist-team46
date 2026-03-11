@@ -1,7 +1,7 @@
 const connectDB = require('./src/config/db');
 const app = require('./src/app');
 const config = require('./src/config/env');
-const logger = require('./utils/logger');
+const logger = require('./src/utils/logger');
 let server;
 
 connectDB().then(() => {

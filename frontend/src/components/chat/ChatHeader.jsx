@@ -1,10 +1,10 @@
+import { Sun, Moon, Globe, LogOut, User as UserIcon, Trash2 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { useChat } from '../../context/ChatContext';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import LanguageSwitcher from '../LanguageSwitcher';
 
 export const ChatHeader = () => {
-    const { t } = useTranslation();
     const { user, toggleRole, logout } = useAuth();
     const { clearMessages } = useChat();
     const [isDarkMode, setIsDarkMode] = useState(false);
@@ -38,13 +38,13 @@ export const ChatHeader = () => {
                 <div className="w-10 h-10 bg-agri-700 rounded-xl flex items-center justify-center shadow-lg shadow-agri-700/30">
                     <span className="text-white font-bold text-xl">🌱</span>
                 </div>
-                <span className="font-bold text-xl hidden sm:block text-gray-800 dark:text-gray-100">{t('app_name')}</span>
+                <span className="font-bold text-xl hidden sm:block text-gray-800 dark:text-gray-100">AgriAssist</span>
             </div>
 
             {/* Center: Page Title */}
             <div className="hidden md:flex flex-col items-center">
-                <h1 className="font-semibold text-gray-800 dark:text-gray-100">{t('ai_assistant')}</h1>
-                <span className="text-xs text-agri-600 dark:text-agri-400 font-medium bg-agri-50 dark:bg-agri-900/30 px-2 py-0.5 rounded-full">{t('online')}</span>
+                <h1 className="font-semibold text-gray-800 dark:text-gray-100">AI Agriculture Assistant</h1>
+                <span className="text-xs text-agri-600 dark:text-agri-400 font-medium bg-agri-50 dark:bg-agri-900/30 px-2 py-0.5 rounded-full">Online</span>
             </div>
 
             {/* Right: Actions */}
@@ -56,10 +56,13 @@ export const ChatHeader = () => {
                     title={`View ${user?.role} Profile`}
                 >
                     {user?.role?.toLowerCase() === 'farmer' ? '👨‍🌾' : '🏪'}
-                    <span className="hidden sm:inline">{t(user?.role?.toLowerCase())}</span>
+                    <span className="hidden sm:inline">{user?.role}</span>
                 </Link>
 
-                <LanguageSwitcher />
+                {/* Language Selector */}
+                <button className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
+                    <Globe size={20} />
+                </button>
 
                 {/* Dark Mode Toggle */}
                 <button
@@ -82,19 +85,19 @@ export const ChatHeader = () => {
                         </div>
                         <button
                             onClick={() => {
-                                if (window.confirm(t('confirm_clear'))) {
+                                if (window.confirm('Are you sure you want to clear your chat history?')) {
                                     clearMessages();
                                 }
                             }}
                             className="w-full text-left px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 text-sm flex items-center gap-2 border-b border-gray-100 dark:border-gray-700 transition-colors"
                         >
-                            <Trash2 size={16} /> {t('clear_chat')}
+                            <Trash2 size={16} /> Clear Chat
                         </button>
                         <button
                             onClick={logout}
                             className="w-full text-left px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 text-sm flex items-center gap-2 rounded-b-xl transition-colors"
                         >
-                            <LogOut size={16} /> {t('logout')}
+                            <LogOut size={16} /> Logout
                         </button>
                     </div>
                 </div>

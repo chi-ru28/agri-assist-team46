@@ -1,32 +1,25 @@
+import { Leaf, CloudSun, Store, ShieldAlert } from 'lucide-react';
 import { useChat } from '../../context/ChatContext';
-import { useTranslation } from 'react-i18next';
-import { Leaf, CloudSun, Store, ShieldAlert, FileText } from 'lucide-react';
 
 export const FarmerQuickActions = ({ onItemClick }) => {
-    const { t } = useTranslation();
     const { sendMessage } = useChat();
 
     const actions = [
-        { label: t('detect_fertilizer'), icon: <Leaf size={18} className="text-agri-600 dark:text-agri-400" />, query: 'Help me detect the right fertilizer for my crop.' },
-        { label: t('weather_info'), icon: <CloudSun size={18} className="text-blue-500" />, query: 'What is the weather forecast for today?' },
-        { label: t('nearby_shops'), icon: <Store size={18} className="text-orange-500" />, query: 'Find me nearby agricultural shops.' },
-        { label: t('pesticide_help'), icon: <ShieldAlert size={18} className="text-red-500" />, query: 'I need help identifying a pesticide.' },
-        { label: t('report'), icon: <FileText size={18} className="text-purple-500" />, action: 'report' },
+        { label: 'Detect Fertilizer', icon: <Leaf size={18} className="text-agri-600 dark:text-agri-400" />, query: 'Help me detect the right fertilizer for my crop.' },
+        { label: 'Weather Info', icon: <CloudSun size={18} className="text-blue-500" />, query: 'What is the weather forecast for today?' },
+        { label: 'Nearby Shops', icon: <Store size={18} className="text-orange-500" />, query: 'Find me nearby agricultural shops.' },
+        { label: 'Pesticide Help', icon: <ShieldAlert size={18} className="text-red-500" />, query: 'I need help identifying a pesticide.' },
     ];
 
     return (
         <div className="flex flex-col gap-3">
-            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">{t('farmer_actions')}</h3>
+            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Farmer Actions</h3>
             {actions.map((action, idx) => (
                 <button
                     key={idx}
                     onClick={() => {
-                        if (action.action === 'report') {
-                            onItemClick && onItemClick('report');
-                        } else {
-                            sendMessage(action.query);
-                            if (onItemClick) onItemClick();
-                        }
+                        sendMessage(action.query);
+                        if (onItemClick) onItemClick();
                     }}
                     className="flex items-center gap-3 p-3 lg:p-4 rounded-2xl bg-white hover:bg-agri-50 dark:bg-gray-800 dark:hover:bg-gray-700/80 transition-all border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md group text-left w-full"
                 >

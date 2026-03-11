@@ -1,20 +1,19 @@
+import { PlusCircle, Container, Activity, Link2 } from 'lucide-react';
 import { useChat } from '../../context/ChatContext';
-import { useTranslation } from 'react-i18next';
 
 export const ShopQuickActions = ({ onItemClick }) => {
-    const { t } = useTranslation();
     const { sendMessage } = useChat();
 
     const actions = [
-        { label: t('add_product'), icon: <PlusCircle size={18} className="text-agri-600 dark:text-agri-400" />, query: 'I want to add a new product to my inventory.' },
-        { label: t('check_stock'), icon: <Container size={18} className="text-blue-500" />, query: 'Show me my current stock levels.' },
-        { label: t('view_demand'), icon: <Activity size={18} className="text-orange-500" />, query: 'What is the current demand for agricultural products?' },
-        { label: t('connect_shops'), icon: <Link2 size={18} className="text-purple-500" />, query: 'How can I connect with other shops?' },
+        { label: 'Add Product', icon: <PlusCircle size={18} className="text-agri-600 dark:text-agri-400" />, query: 'I want to add a new product to my inventory.' },
+        { label: 'Check Stock', icon: <Container size={18} className="text-blue-500" />, query: 'Show me my current stock levels.' },
+        { label: 'View Demand', icon: <Activity size={18} className="text-orange-500" />, query: 'What is the current demand for agricultural products?' },
+        { label: 'Connect Shops', icon: <Link2 size={18} className="text-purple-500" />, query: 'How can I connect with other shops?' },
     ];
 
     return (
         <div className="flex flex-col gap-3">
-            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">{t('shop_actions')}</h3>
+            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Shop Actions</h3>
             {actions.map((action, idx) => (
                 <button
                     key={idx}

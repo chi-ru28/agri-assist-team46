@@ -23,48 +23,88 @@ class User(Base):
     __tablename__ = "users"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String, nullable=False)
-    phone = Column(String, unique=True, nullable=True)
     email = Column(String, unique=True, nullable=False)
-    password = Column(String, nullable=False)
-    role = Column(String, nullable=True)
-    refreshToken = Column(String)
-    createdAt = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updatedAt = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
-    isActive = Column(Boolean, default=True)
+    password = Column(String, nullable=True)
+    role = Column(String, nullable=False) # 'farmer' or 'shopkeeper'
+    otp_code = Column(String, nullable=True)
+    otp_expiry = Column(DateTime, nullable=True)
+    preferred_language = Column(String, default='en', nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    is_active = Column(Boolean, default=True)
 
 class ChatHistory(Base):
     __tablename__ = "chat_history"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    userId = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
-    messages = Column(JSONB, default=[])
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    message = Column(Text, nullable=False)
+    response = Column(Text, nullable=False)
+    timestamp = Column(DateTime, default=datetime.utcnow, nullable=False)
 
 class Farmer(Base):
     __tablename__ = "farmers"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    userId = Column(UUID(as_uuid=True), ForeignKey("users.id"), unique=True, nullable=False)
-    landSize = Column(Float, default=0.0)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), unique=True, nullable=False)
+    land_size = Column(Float, default=0.0)
     address = Column(String, default='')
     location = Column(JSONB, default={"type": "Point", "coordinates": [0, 0]})
 
 class Shop(Base):
     __tablename__ = "shops"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    userId = Column(UUID(as_uuid=True), ForeignKey("users.id"), unique=True, nullable=False)
-    shopName = Column(String, default='')
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), unique=True, nullable=False)
+    shop_name = Column(String, default='')
     address = Column(String, default='')
     location = Column(JSONB, default={"type": "Point", "coordinates": [0, 0]})
 
 class Product(Base):
     __tablename__ = "products"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    shopId = Column(UUID(as_uuid=True), ForeignKey("shops.id"), nullable=False)
+    shop_id = Column(UUID(as_uuid=True), ForeignKey("shops.id"), nullable=False)
     name = Column(String, nullable=False)
     description = Column(Text)
     price = Column(Float, nullable=False)
     category = Column(String, nullable=False)
-    inventoryCount = Column(Integer, default=0)
-    isAvailable = Column(Boolean, default=True)
+    inventory_count = Column(Integer, default=0)
+    is_available = Column(Boolean, default=True)
     tag = Column(String) # "Organic" or "Chemical"
+
+class CropReport(Base):
+    __tablename__ = "crop_reports"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    crop_name = Column(String, nullable=False)
+    analysis_result = Column(Text)
+    recommendation = Column(JSONB)
+    image_url = Column(String)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class Reminder(Base):
+    __tablename__ = "reminders"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    title = Column(String, nullable=False)
+    description = Column(Text)
+    remind_at = Column(DateTime, nullable=False)
+    is_completed = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class AdminLog(Base):
+    __tablename__ = "admin_logs"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    admin_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    action = Column(String, nullable=False)
+    target_id = Column(String)
+    details = Column(Text)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class AIUsageAnalytics(Base):
+    __tablename__ = "ai_usage_analytics"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
+    request_type = Column(String) # "text", "voice", "image"
+    token_count = Column(Integer, default=0)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 # Create tables
 Base.metadata.create_all(bind=engine)

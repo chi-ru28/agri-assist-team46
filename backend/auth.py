@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-JWT_SECRET = os.getenv("JWT_SECRET", "super_secret_key")
+JWT_SECRET = os.getenv("JWT_SECRET", "supersecretkey")
 ALGORITHM = "HS256"
 
 security = HTTPBearer()

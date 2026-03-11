@@ -2,9 +2,11 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, MapPin, Phone, Mail, Box, Activity } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export const Profile = () => {
     const { user, logout } = useAuth();
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
     if (!user) {
@@ -24,7 +26,7 @@ export const Profile = () => {
                     >
                         <ArrowLeft size={20} className="text-gray-600 dark:text-gray-300" />
                     </button>
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Profile</h1>
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('profile')}</h1>
                 </div>
 
                 {/* Profile Card */}
@@ -49,7 +51,7 @@ export const Profile = () => {
                                     onClick={() => { logout(); navigate('/login'); }}
                                     className="px-4 py-2 bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400 border border-red-100 dark:border-red-900/50 rounded-full text-sm font-medium hover:bg-red-100 dark:hover:bg-red-900/80 transition-colors"
                                 >
-                                    Logout
+                                    {t('logout')}
                                 </button>
                             </div>
                         </div>
@@ -60,7 +62,7 @@ export const Profile = () => {
                                 {user.name}
                             </h2>
                             <p className="text-gray-500 dark:text-gray-400 font-medium">
-                                {isFarmer ? 'Master Farmer' : 'Agricultural Vendor'}
+                                {isFarmer ? t('farmer') : t('shopkeeper')}
                             </p>
                         </div>
 
@@ -69,8 +71,8 @@ export const Profile = () => {
                             <div className="flex items-center gap-3 p-4 rounded-2xl bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800">
                                 <div className="p-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm text-gray-500"><Phone size={20} /></div>
                                 <div>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">Phone</p>
-                                    <p className="font-medium text-gray-900 dark:text-gray-200">+91 98765 43210</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">{t('phone')}</p>
+                                    <p className="font-medium text-gray-900 dark:text-gray-200">{user.phone}</p>
                                 </div>
                             </div>
 
@@ -78,7 +80,7 @@ export const Profile = () => {
                                 <div className="p-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm text-gray-500"><MapPin size={20} /></div>
                                 <div>
                                     <p className="text-xs text-gray-500 dark:text-gray-400">Location</p>
-                                    <p className="font-medium text-gray-900 dark:text-gray-200">Punjab, India</p>
+                                    <p className="font-medium text-gray-900 dark:text-gray-200">District, India</p>
                                 </div>
                             </div>
 
@@ -86,7 +88,7 @@ export const Profile = () => {
                                 <div className="p-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm text-gray-500"><Mail size={20} /></div>
                                 <div>
                                     <p className="text-xs text-gray-500 dark:text-gray-400">Email</p>
-                                    <p className="font-medium text-gray-900 dark:text-gray-200">{user.name.split(' ')[0].toLowerCase()}@example.com</p>
+                                    <p className="font-medium text-gray-900 dark:text-gray-200">{user.email || 'N/A'}</p>
                                 </div>
                             </div>
 
@@ -95,7 +97,7 @@ export const Profile = () => {
                                     <div className="p-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm text-gray-500"><Activity size={20} /></div>
                                     <div>
                                         <p className="text-xs text-gray-500 dark:text-gray-400">Crop Focus</p>
-                                        <p className="font-medium text-gray-900 dark:text-gray-200">Wheat & Corn</p>
+                                        <p className="font-medium text-gray-900 dark:text-gray-200">Multipurpose</p>
                                     </div>
                                 </div>
                             ) : (
@@ -103,7 +105,7 @@ export const Profile = () => {
                                     <div className="p-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm text-gray-500"><Box size={20} /></div>
                                     <div>
                                         <p className="text-xs text-gray-500 dark:text-gray-400">Inventory Status</p>
-                                        <p className="font-medium text-gray-900 dark:text-gray-200">85% Stocked</p>
+                                        <p className="font-medium text-gray-900 dark:text-gray-200">Active</p>
                                     </div>
                                 </div>
                             )}

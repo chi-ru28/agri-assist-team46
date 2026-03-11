@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "C:\agri-assist-team46\database\seed_db.py", line 35, in <module>
+    farmer_details = Farmer(
+        userId=farmer_user.id,
+    ...<2 lines>...
+        location={"type": "Point", "coordinates": [72.1, 23.8]}
+    )
+  File "<string>", line 4, in __init__
+  File "C:\Users\patel\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\state.py", line 596, in _initialize_instance
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\patel\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 121, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\patel\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\state.py", line 594, in _initialize_instance
+    manager.original_init(*mixed[1:], **kwargs)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\patel\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 2179, in _declarative_constructor
+    raise TypeError(
+        "%r is an invalid keyword argument for %s" % (k, cls_.__name__)
+    )
+TypeError: 'userId' is an invalid keyword argument for Farmer

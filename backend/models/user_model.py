@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, validator
 from typing import Optional
 from datetime import datetime
 from enum import Enum
@@ -9,29 +9,28 @@ class RoleEnum(str, Enum):
 
 class UserRegister(BaseModel):
     name: str = Field(..., min_length=2)
-    phone: str = Field(..., min_length=5, max_length=50)
-    email: Optional[EmailStr] = None
+    email: EmailStr
     password: str = Field(..., min_length=6)
     role: RoleEnum
+    language: Optional[str] = 'en'
 
 class UserLogin(BaseModel):
-    phone: str = Field(..., max_length=50)
+    email: EmailStr
     password: str
 
 class UserResponse(BaseModel):
     id: str
     name: str
-    phone: str
-    email: Optional[str]
+    email: str
     role: str
-    createdAt: datetime
-    isActive: bool
+    preferred_language: str
+    created_at: datetime
+    is_active: bool
 
 # Used for internal representation (saving to DB)
 class UserModel(BaseModel):
     name: str
-    phone: str = Field(..., max_length=50)
-    email: Optional[EmailStr] = None
+    email: EmailStr
     password: str
     role: RoleEnum
     createdAt: datetime = Field(default_factory=datetime.utcnow)

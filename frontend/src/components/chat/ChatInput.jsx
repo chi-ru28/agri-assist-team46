@@ -1,8 +1,12 @@
+import { useState, useRef, useEffect } from 'react';
+import { Send, Image as ImageIcon, Zap, X } from 'lucide-react';
+import { useChat } from '../../context/ChatContext';
+import { VoiceButton } from './VoiceButton';
+import { useAuth } from '../../context/AuthContext';
+import { FarmerQuickActions } from '../dashboard/FarmerQuickActions';
 import { ShopQuickActions } from '../dashboard/ShopQuickActions';
-import { useTranslation } from 'react-i18next';
 
 export const ChatInput = () => {
-    const { t } = useTranslation();
     const [input, setInput] = useState('');
     const { sendMessage, sendImageMessage } = useChat();
     const fileInputRef = useRef(null);
@@ -45,7 +49,7 @@ export const ChatInput = () => {
                     <div className="flex justify-between items-center mb-3 pb-2 border-b border-gray-100 dark:border-gray-700">
                         <h3 className="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                             <Zap size={16} className="text-agri-500" />
-                            {t('quick_actions')}
+                            Quick Actions
                         </h3>
                         <button onClick={() => setShowActions(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 bg-gray-50 dark:bg-gray-700/50 p-1 rounded-full">
                             <X size={16} />
@@ -89,7 +93,7 @@ export const ChatInput = () => {
                     <textarea
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        placeholder={t('chat_placeholder')}
+                        placeholder="Message AgriAssist..."
                         rows={1}
                         className="w-full h-full bg-transparent px-2 md:px-3 py-3.5 text-[15px] outline-none text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 resize-none overflow-hidden block"
                         onKeyDown={(e) => {
@@ -109,7 +113,7 @@ export const ChatInput = () => {
                 </form>
             </div>
             <div className="max-w-4xl mx-auto text-center mt-3">
-                <p className="text-[11px] text-gray-400 dark:text-gray-500">{t('mistake_disclaimer')}</p>
+                <p className="text-[11px] text-gray-400 dark:text-gray-500">AgriAssist can make mistakes. Check important information.</p>
             </div>
         </div>
     );

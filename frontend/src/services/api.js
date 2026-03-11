@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create a configured axios instance
 const apiClient = axios.create({
-    baseURL: '/api',
+    baseURL: import.meta.env.VITE_API_URL || '/api',
     headers: {
         'Content-Type': 'application/json',
     },
@@ -21,8 +21,8 @@ apiClient.interceptors.request.use((config) => {
 
 export const api = {
     auth: {
-        login: async (credentials) => {
-            const response = await apiClient.post('/auth/login', credentials);
+        login: async (loginData) => {
+            const response = await apiClient.post('/auth/login', loginData);
             return response.data;
         },
         register: async (userData) => {
@@ -31,6 +31,10 @@ export const api = {
         },
         logout: async () => {
             const response = await apiClient.post('/auth/logout');
+            return response.data;
+        },
+        updateLanguage: async (language) => {
+            const response = await apiClient.put('/auth/language', { language });
             return response.data;
         }
     },
@@ -52,13 +56,22 @@ export const api = {
             return response.data;
         },
         analyzeImage: async (imageFile, text = '') => {
-            const formData = new FormData();
-            formData.append('image', imageFile);
-            formData.append('message', text);
-            const response = await apiClient.post('/chat', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = async () => {
+                    try {
+                        const response = await apiClient.post('/chat', {
+                            message: text || "Analyzed image content",
+                            image_data: reader.result
+                        });
+                        resolve(response);
+                    } catch (err) {
+                        reject(err);
+                    }
+                };
+                reader.onerror = (error) => reject(error);
+                reader.readAsDataURL(imageFile);
             });
-            return response;
         }
     },
     ai: {

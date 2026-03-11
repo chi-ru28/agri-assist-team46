@@ -6,9 +6,8 @@ const ApiError = require('../utils/ApiError');
 const addProduct = catchAsync(async (req, res) => {
     const shop = await Shop.findOne({ where: { userId: req.user.id } });
     if (!shop) throw new ApiError(httpStatus.NOT_FOUND, 'Shop details not found');
-    // Assuming isActive logic or similar (if we added it to DB)
-    // For now keeping it simple as per previous logic
-    
+    if (!shop.isActive) throw new ApiError(httpStatus.FORBIDDEN, 'Shop not approved yet');
+
     const product = await Product.create({ ...req.body, shopId: shop.id });
     res.status(httpStatus.CREATED).send(product);
 });

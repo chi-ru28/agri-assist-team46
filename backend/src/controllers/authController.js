@@ -5,13 +5,13 @@ const { User, Farmer, Shop } = require('../models/index');
 const ApiError = require('../utils/ApiError');
 
 const register = catchAsync(async (req, res) => {
-    const { name, phone, password, role, ...roleData } = req.body;
+    const { name, email, password, role, ...roleData } = req.body;
 
-    if (await User.findOne({ where: { phone } })) {
-        throw new ApiError(httpStatus.BAD_REQUEST, 'Phone number already registered');
+    if (await User.findOne({ where: { email } })) {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Email is already registered');
     }
 
-    const user = await User.create({ name, phone, password, role });
+    const user = await User.create({ name, email, password, role });
 
     if (role === 'farmer') {
         await Farmer.create({
@@ -34,8 +34,8 @@ const register = catchAsync(async (req, res) => {
 });
 
 const login = catchAsync(async (req, res) => {
-    const { phone, password } = req.body;
-    const user = await authService.loginUserWithPhoneAndPassword(phone, password);
+    const { email, password } = req.body;
+    const user = await authService.loginUserWithEmailAndPassword(email, password);
     const tokens = await authService.generateAuthTokens(user);
     res.send({ user, tokens });
 });
